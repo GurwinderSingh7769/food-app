@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ZaikaAI – Amritsar Food Discovery</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --saffron: #FF6B00;
+  --saffron-light: #FF8C38;
+  --saffron-pale: #FFF3E8;
+  --deep: #1A0A00;
+  --maroon: #8B1A1A;
+  --cream: #FDF6EC;
+  --gold: #D4A017;
+  --gold-light: #F5C842;
+  --green: #2D6A4F;
+  --green-light: #52B788;
+  --text: #2C1810;
+  --text-muted: #7A5C4F;
+  --border: #E8D5C4;
+  --white: #FFFFFF;
+  --card-bg: #FFFBF7;
+  --shadow: 0 4px 24px rgba(26,10,0,0.10);
+  --shadow-lg: 0 8px 48px rgba(26,10,0,0.16);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── SCREENS ─── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ─── LOGIN ─── */
+#login-screen {
+  background: var(--deep);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-bg-pattern {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,107,0,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(212,160,23,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(139,26,26,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.login-mandala {
+  position: absolute;
+  width: 600px; height: 600px;
+  border: 1px solid rgba(255,107,0,0.06);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  animation: spin 40s linear infinite;
+}
+.login-mandala::before {
+  content: '';
+  position: absolute; inset: 30px;
+  border: 1px solid rgba(212,160,23,0.08);
+  border-radius: 50%;
+  animation: spin 20s linear infinite reverse;
+}
+.login-mandala::after {
+  content: '';
+  position: absolute; inset: 60px;
+  border: 1px solid rgba(255,107,0,0.05);
+  border-radius: 50%;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.login-card {
+  position: relative;
+  z-index: 10;
+  background: rgba(255,251,247,0.04);
+  border: 1px solid rgba(255,107,0,0.2);
+  border-radius: 24px;
+  padding: 48px 44px;
+  width: 100%;
+  max-width: 420px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.login-logo .logo-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 8px;
+  animation: bounce 2s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.login-logo h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.5px;
+}
+.login-logo h1 span { color: var(--saffron); }
+.login-logo p {
+  color: rgba(255,255,255,0.45);
+  font-size: 13px;
+  margin-top: 4px;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.tab-toggle {
+  display: flex;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 28px;
+}
+.tab-toggle button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab-toggle button.active {
+  background: var(--saffron);
+  color: var(--white);
+  box-shadow: 0 2px 12px rgba(255,107,0,0.4);
+}
+
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,107,0,0.2);
+  border-radius: 12px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s;
+}
+.form-group input::placeholder { color: rgba(255,255,255,0.2); }
+.form-group input:focus {
+  border-color: var(--saffron);
+  background: rgba(255,107,0,0.08);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.15);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--saffron), #E05000);
+  border: none;
+  border-radius: 12px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(255,107,0,0.4);
+  margin-top: 8px;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(255,107,0,0.5);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.login-divider {
+  text-align: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 12px;
+  margin: 20px 0;
+  position: relative;
+}
+.login-divider::before, .login-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+.login-divider::before { left: 0; }
+.login-divider::after { right: 0; }
+
+.btn-guest {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color: rgba(255,255,255,0.6);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-guest:hover {
+  border-color: rgba(255,255,255,0.3);
+  color: var(--white);
+  background: rgba(255,255,255,0.05);
+}
+
+/* ─── QUIZ SCREEN ─── */
+#quiz-screen {
+  background: var(--cream);
+  min-height: 100vh;
+}
+
+.quiz-header {
+  background: var(--deep);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.quiz-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+}
+.quiz-logo span { color: var(--saffron); }
+
+.quiz-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--saffron), var(--gold-light));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.quiz-step-label {
+  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+  font-family: 'Space Mono', monospace;
+  white-space: nowrap;
+}
+
+.quiz-body {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 24px 100px;
+}
+
+.quiz-question {
+  display: none;
+  animation: fadeUp 0.4s ease;
+}
+.quiz-question.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.q-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--saffron);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.q-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--deep);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.q-sub {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-bottom: 36px;
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.option-grid.two-col { grid-template-columns: 1fr 1fr; }
+.option-grid.three-col { grid-template-columns: repeat(3, 1fr); }
+
+.option-card {
+  padding: 20px 16px;
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.option-card:hover {
+  border-color: var(--saffron-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255,107,0,0.12);
+}
+.option-card.selected {
+  border-color: var(--saffron);
+  background: var(--saffron-pale);
+  box-shadow: 0 4px 20px rgba(255,107,0,0.2);
+}
+.option-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px; right: 10px;
+  font-size: 12px;
+  color: var(--saffron);
+  font-weight: 700;
+}
+.option-icon { font-size: 32px; margin-bottom: 8px; }
+.option-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  display: block;
+}
+.option-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Spice slider */
+.spice-slider-wrap { margin-bottom: 32px; }
+.spice-track {
+  position: relative;
+  height: 12px;
+  background: linear-gradient(90deg, #52B788, #F5C842, #FF6B00, #8B1A1A);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+.spice-track input[type=range] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+.spice-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 28px; height: 28px;
+  background: var(--white);
+  border: 3px solid var(--saffron);
+  border-radius: 50%;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  pointer-events: none;
+  transition: left 0.1s;
+}
+.spice-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.spice-value {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--saffron);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* Budget slider */
+.budget-slider-wrap { margin-bottom: 32px; }
+.budget-display {
+  font-family: 'Space Mono', monospace;
+  font-size: 28px;
+  color: var(--deep);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.budget-display span { color: var(--saffron); }
+.slider-input {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--saffron) 0%, var(--border) 0%);
+  outline: none;
+  cursor: pointer;
+}
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--saffron);
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+  cursor: pointer;
+}
+
+.quiz-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.btn-back {
+  padding: 14px 24px;
+  background: transparent;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--saffron); color: var(--saffron); }
+.btn-next {
+  flex: 1;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--saffron), #E05000);
+  border: none;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(255,107,0,0.3);
+}
+.btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(255,107,0,0.4); }
+.btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ─── RESULTS SCREEN ─── */
+#results-screen {
+  background: var(--cream);
+  min-height: 100vh;
+}
+
+.app-header {
+  background: var(--deep);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  height: 64px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.header-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+  text-decoration: none;
+}
+.header-logo span { color: var(--saffron); }
+
+.header-nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.header-nav button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.header-nav button.active, .header-nav button:hover {
+  background: rgba(255,107,0,0.2);
+  color: var(--saffron-light);
+}
+
+.user-badge {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--saffron), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Results hero */
+.results-hero {
+  background: linear-gradient(135deg, var(--deep) 0%, #2D1000 100%);
+  padding: 40px 24px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.results-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(255,107,0,0.12) 0%, transparent 60%);
+}
+.results-hero-inner { max-width: 900px; margin: 0 auto; position: relative; }
+.results-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.results-title em { color: var(--saffron); font-style: normal; }
+.results-sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+.results-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.results-tag {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.results-tag.veg { background: rgba(82,183,136,0.2); color: #52B788; border: 1px solid rgba(82,183,136,0.3); }
+.results-tag.spice { background: rgba(255,107,0,0.2); color: var(--saffron-light); border: 1px solid rgba(255,107,0,0.3); }
+.results-tag.budget { background: rgba(212,160,23,0.2); color: var(--gold-light); border: 1px solid rgba(212,160,23,0.3); }
+.results-tag.type { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); }
+
+.results-count {
+  margin-top: 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+}
+.results-count strong { color: var(--saffron); font-size: 18px; }
+
+.btn-redo {
+  position: absolute;
+  top: 0; right: 0;
+  padding: 10px 18px;
+  background: rgba(255,107,0,0.15);
+  border: 1px solid rgba(255,107,0,0.3);
+  border-radius: 10px;
+  color: var(--saffron-light);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-redo:hover { background: rgba(255,107,0,0.25); }
+
+/* Tab bar */
+.tab-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  gap: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 16px 20px;
+  border: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn.active {
+  color: var(--saffron);
+  border-bottom-color: var(--saffron);
+}
+.tab-btn:hover { color: var(--text); }
+
+/* Content panels */
+.panel { display: none; }
+.panel.active { display: block; }
+
+.content-area {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+/* Restaurant cards */
+.reco-section { margin-bottom: 48px; }
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--deep);
+  margin-bottom: 6px;
+}
+.section-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+.cards-grid.featured { grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.restaurant-card {
+  background: var(--white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  position: relative;
+}
+.restaurant-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255,107,0,0.2);
+}
+
+.card-img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  background: var(--saffron-pale);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+  flex-shrink: 0;
+}
+.card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.card-img.placeholder { background: linear-gradient(135deg, #FFE5CC, #FFF0E0); }
+
+.card-body { padding: 16px 18px 18px; }
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--deep);
+  line-height: 1.3;
+}
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--saffron);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.card-cuisine {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.pill.veg { background: #E8F5EE; color: #2D6A4F; }
+.pill.nonveg { background: #FDECEA; color: #8B1A1A; }
+.pill.both { background: #FFF3E8; color: #7A3500; }
+.pill.jain { background: #E8F5EE; color: #2D6A4F; }
+.pill.type { background: var(--saffron-pale); color: var(--saffron); }
+.pill.budget { background: #FFF9E6; color: #7A5C00; }
+.pill.spice { background: #FFF0E0; color: #8B3A00; }
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+}
+.card-cost {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--deep);
+}
+.card-hours {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.card-map-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  background: var(--saffron-pale);
+  border: 1px solid rgba(255,107,0,0.2);
+  border-radius: 8px;
+  color: var(--saffron);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.card-map-btn:hover { background: var(--saffron); color: white; }
+
+.match-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, var(--saffron), #E05000);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+}
+
+/* Featured top card */
+.featured-card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  background: var(--white);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255,107,0,0.15);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.featured-card:hover { transform: translateY(-4px); box-shadow: 0 16px 60px rgba(26,10,0,0.2); }
+.featured-card .card-img { height: 100%; min-height: 240px; }
+.featured-card .card-body { padding: 28px 28px; }
+.featured-card .card-name { font-size: 26px; margin-bottom: 6px; }
+.featured-card .card-desc { -webkit-line-clamp: 3; font-size: 14px; }
+
+/* ─── EXPLORE PANEL ─── */
+.explore-filters {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-select {
+  padding: 8px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--white);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.filter-select:focus { border-color: var(--saffron); }
+
+.search-bar {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+}
+.search-bar input::placeholder { color: var(--text-muted); }
+
+.results-summary {
+  padding: 16px 24px;
+  font-size: 14px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+.results-summary strong { color: var(--text); }
+
+.explore-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10,5,0,0.75);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white);
+  border-radius: 24px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+}
+.modal-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  background: var(--saffron-pale);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px;
+}
+.modal-img img { width: 100%; height: 100%; object-fit: cover; }
+.modal-body { padding: 28px; }
+.modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; gap: 12px; }
+.modal-name { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--deep); }
+.modal-close {
+  width: 36px; height: 36px;
+  border: none;
+  background: var(--cream);
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: var(--border); }
+.modal-desc { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.modal-info-item { }
+.modal-info-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.modal-info-value { font-size: 14px; font-weight: 600; color: var(--text); }
+.modal-specialties { margin-bottom: 20px; }
+.modal-spec-title { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+.spec-tag { display: inline-block; padding: 6px 12px; background: var(--saffron-pale); color: var(--saffron); border-radius: 20px; font-size: 13px; font-weight: 500; margin: 4px 4px 4px 0; }
+.modal-actions { display: flex; gap: 12px; }
+.btn-maps {
+  flex: 1;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--saffron), #E05000);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none;
+}
+.btn-maps:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,107,0,0.4); }
+.btn-call {
+  padding: 14px 20px;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none;
+}
+.btn-call:hover { border-color: var(--saffron); color: var(--saffron); }
+
+/* Specialties chips */
+.spec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.spec-chip {
+  padding: 5px 12px;
+  background: var(--saffron-pale);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--saffron);
+}
+
+/* No results */
+.no-results {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-muted);
+}
+.no-results .icon { font-size: 48px; margin-bottom: 16px; }
+.no-results h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text); margin-bottom: 8px; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .login-card { padding: 32px 24px; max-width: 100%; margin: 16px; }
+  .quiz-body { padding: 32px 16px 100px; }
+  .q-title { font-size: 24px; }
+  .option-grid { grid-template-columns: 1fr 1fr; }
+  .cards-grid.featured, .featured-card { grid-template-columns: 1fr; }
+  .featured-card { grid-column: auto; }
+  .featured-card .card-img { min-height: 200px; }
+  .modal-grid { grid-template-columns: 1fr; }
+  .results-title { font-size: 28px; }
+  .explore-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── LOGIN SCREEN ─── -->
+<div id="login-screen" class="screen active">
+  <div class="login-bg-pattern"></div>
+  <div class="login-mandala"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="logo-icon">🍛</span>
+      <h1>Zaika<span>AI</span></h1>
+      <p>Amritsar Food Discovery</p>
+    </div>
+    <div class="tab-toggle">
+      <button class="active" onclick="switchAuthTab('login')">Sign In</button>
+      <button onclick="switchAuthTab('signup')">Create Account</button>
+    </div>
+    <div id="login-form">
+      <div class="form-group"><label>Username</label><input type="text" id="login-user" placeholder="e.g. foodlover_amritsar" autocomplete="username"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+    </div>
+    <div id="signup-form" style="display:none">
+      <div class="form-group"><label>Full Name</label><input type="text" id="signup-name" placeholder="Your name"/></div>
+      <div class="form-group"><label>Username</label><input type="text" id="signup-user" placeholder="Pick a username"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="signup-pass" placeholder="Create password"/></div>
+      <button class="btn-primary" onclick="doSignup()">Create Account →</button>
+    </div>
+    <div class="login-divider">or</div>
+    <button class="btn-guest" onclick="doGuest()">Continue as Guest 👤</button>
+  </div>
+</div>
+
+<!-- ─── QUIZ SCREEN ─── -->
+<div id="quiz-screen" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-logo">Zaika<span>AI</span></div>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-prog" style="width:14%"></div></div>
+    <div class="quiz-step-label" id="quiz-step-label">1 / 7</div>
+  </div>
+  <div class="quiz-body">
+
+    <!-- Q1: Veg preference -->
+    <div class="quiz-question active" data-q="1">
+      <div class="q-label">Question 01 / 07</div>
+      <div class="q-title">What's your food preference?</div>
+      <div class="q-sub">This shapes every recommendation we make for you.</div>
+      <div class="option-grid two-col">
+        <div class="option-card" onclick="selectOption(this,'vegPref','Pure Veg')">
+          <div class="option-icon">🌿</div>
+          <span class="option-label">Pure Vegetarian</span>
+          <div class="option-sub">No meat, no eggs</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'vegPref','Non-Veg')">
+          <div class="option-icon">🍗</div>
+          <span class="option-label">Non-Vegetarian</span>
+          <div class="option-sub">All options open</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'vegPref','Jain')">
+          <div class="option-icon">🙏</div>
+          <span class="option-label">Jain</span>
+          <div class="option-sub">No onion, no garlic, no root veg</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'vegPref','No Onion No Garlic')">
+          <div class="option-icon">🧅</div>
+          <span class="option-label">No Onion / Garlic</span>
+          <div class="option-sub">Sattvic diet friendly</div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-next" id="q1-next" onclick="nextQuestion(2)" disabled>Next →</button>
+      </div>
+    </div>
+
+    <!-- Q2: Spice level -->
+    <div class="quiz-question" data-q="2">
+      <div class="q-label">Question 02 / 07</div>
+      <div class="q-title">How spicy do you like it?</div>
+      <div class="q-sub">Drag the slider to your perfect heat level.</div>
+      <div class="spice-slider-wrap">
+        <div class="spice-value" id="spice-val">🌶️ Medium</div>
+        <div class="spice-track">
+          <input type="range" min="0" max="4" value="2" id="spice-slider" oninput="updateSpice(this.value)"/>
+          <div class="spice-thumb" id="spice-thumb" style="left:50%"></div>
+        </div>
+        <div class="spice-labels"><span>🥛 Mild</span><span>Medium</span><span>🔥 Extra Hot</span></div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-back" onclick="nextQuestion(1)">← Back</button>
+        <button class="btn-next" onclick="nextQuestion(3)">Next →</button>
+      </div>
+    </div>
+
+    <!-- Q3: Budget -->
+    <div class="quiz-question" data-q="3">
+      <div class="q-label">Question 03 / 07</div>
+      <div class="q-title">What's your budget?</div>
+      <div class="q-sub">Per person, for a complete meal.</div>
+      <div class="budget-slider-wrap">
+        <div class="budget-display">₹<span id="budget-val">400</span> <span style="font-size:16px;color:var(--text-muted);font-family:'DM Sans'">per person</span></div>
+        <input type="range" class="slider-input" min="100" max="2000" step="50" value="400" id="budget-slider" oninput="updateBudget(this.value)"/>
+        <div class="spice-labels" style="margin-top:12px"><span>₹100 Budget</span><span>₹1000+ Premium</span></div>
+      </div>
+      <div class="option-grid three-col" style="margin-top:24px">
+        <div class="option-card" onclick="setBudgetPreset(150,'Budget')">
+          <div class="option-icon">💰</div>
+          <span class="option-label">Budget</span>
+          <div class="option-sub">Under ₹200</div>
+        </div>
+        <div class="option-card" onclick="setBudgetPreset(400,'Mid-range')">
+          <div class="option-icon">💳</div>
+          <span class="option-label">Mid-range</span>
+          <div class="option-sub">₹200–700</div>
+        </div>
+        <div class="option-card" onclick="setBudgetPreset(1000,'Premium')">
+          <div class="option-icon">💎</div>
+          <span class="option-label">Premium</span>
+          <div class="option-sub">₹700+</div>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-back" onclick="nextQuestion(2)">← Back</button>
+        <button class="btn-next" onclick="nextQuestion(4)">Next →</button>
+      </div>
+    </div>
+
+    <!-- Q4: Area -->
+    <div class="quiz-question" data-q="4">
+      <div class="q-label">Question 04 / 07</div>
+      <div class="q-title">Which area are you in?</div>
+      <div class="q-sub">We'll prioritise restaurants nearest to you.</div>
+      <div class="option-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">
+        <div class="option-card" onclick="selectOption(this,'area','Golden Temple Area')"><div class="option-icon">🕌</div><span class="option-label">Golden Temple</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Hall Bazaar')"><div class="option-icon">🏪</div><span class="option-label">Hall Bazaar</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Lawrence Road')"><div class="option-icon">🌳</div><span class="option-label">Lawrence Rd</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Crystal Chowk')"><div class="option-icon">💎</div><span class="option-label">Crystal Chowk</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Ranjit Avenue')"><div class="option-icon">🏙️</div><span class="option-label">Ranjit Avenue</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Airport Road')"><div class="option-icon">✈️</div><span class="option-label">Airport Road</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Majitha Road')"><div class="option-icon">🛣️</div><span class="option-label">Majitha Road</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Batala Road')"><div class="option-icon">🏘️</div><span class="option-label">Batala Road</span></div>
+        <div class="option-card" onclick="selectOption(this,'area','Any')"><div class="option-icon">📍</div><span class="option-label">Anywhere</span></div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-back" onclick="nextQuestion(3)">← Back</button>
+        <button class="btn-next" id="q4-next" onclick="nextQuestion(5)" disabled>Next →</button>
+      </div>
+    </div>
+
+    <!-- Q5: Restaurant type -->
+    <div class="quiz-question" data-q="5">
+      <div class="q-label">Question 05 / 07</div>
+      <div class="q-title">What kind of place?</div>
+      <div class="q-sub">Pick the vibe you're looking for today.</div>
+      <div class="option-grid two-col">
+        <div class="option-card" onclick="selectOption(this,'restType','Street Food')"><div class="option-icon">🛺</div><span class="option-label">Street Food</span><div class="option-sub">Stalls, chaat, kulcha carts</div></div>
+        <div class="option-card" onclick="selectOption(this,'restType','Cafe')"><div class="option-icon">☕</div><span class="option-label">Café</span><div class="option-sub">Coffee, desserts, light bites</div></div>
+        <div class="option-card" onclick="selectOption(this,'restType','Fine Dining')"><div class="option-icon">🍽️</div><span class="option-label">Fine Dining</span><div class="option-sub">Upscale, full service</div></div>
+        <div class="option-card" onclick="selectOption(this,'restType','Casual')"><div class="option-icon">🪑</div><span class="option-label">Casual</span><div class="option-sub">Relaxed restaurants & dhabas</div></div>
+        <div class="option-card" onclick="selectOption(this,'restType','Dhaba')"><div class="option-icon">🍲</div><span class="option-label">Dhaba</span><div class="option-sub">Authentic roadside style</div></div>
+        <div class="option-card" onclick="selectOption(this,'restType','Any')"><div class="option-icon">🎲</div><span class="option-label">Surprise Me!</span><div class="option-sub">Open to anything</div></div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-back" onclick="nextQuestion(4)">← Back</button>
+        <button class="btn-next" id="q5-next" onclick="nextQuestion(6)" disabled>Next →</button>
+      </div>
+    </div>
+
+    <!-- Q6: Cuisine -->
+    <div class="quiz-question" data-q="6">
+      <div class="q-label">Question 06 / 07</div>
+      <div class="q-title">Any cuisine in mind?</div>
+      <div class="q-sub">Select all that tempt you.</div>
+      <div class="option-grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','North Indian')"><div class="option-icon">🍛</div><span class="option-label">North Indian</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','Punjabi')"><div class="option-icon">🌾</div><span class="option-label">Punjabi</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','Kulcha')"><div class="option-icon">🫓</div><span class="option-label">Kulcha</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','Chinese')"><div class="option-icon">🥢</div><span class="option-label">Chinese</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','Fast Food')"><div class="option-icon">🍔</div><span class="option-label">Fast Food</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','Sweets')"><div class="option-icon">🍮</div><span class="option-label">Sweets</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','Continental')"><div class="option-icon">🥗</div><span class="option-label">Continental</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','South Indian')"><div class="option-icon">🥞</div><span class="option-label">South Indian</span></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'cuisines','Any')"><div class="option-icon">🌍</div><span class="option-label">Open to all</span></div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-back" onclick="nextQuestion(5)">← Back</button>
+        <button class="btn-next" onclick="nextQuestion(7)">Next →</button>
+      </div>
+    </div>
+
+    <!-- Q7: Meal time -->
+    <div class="quiz-question" data-q="7">
+      <div class="q-label">Question 07 / 07</div>
+      <div class="q-title">When are you eating?</div>
+      <div class="q-sub">We'll only show places that are open.</div>
+      <div class="option-grid two-col">
+        <div class="option-card" onclick="selectOption(this,'mealTime','Breakfast')"><div class="option-icon">🌅</div><span class="option-label">Breakfast</span><div class="option-sub">Before noon</div></div>
+        <div class="option-card" onclick="selectOption(this,'mealTime','Lunch')"><div class="option-icon">☀️</div><span class="option-label">Lunch</span><div class="option-sub">Noon – 3 PM</div></div>
+        <div class="option-card" onclick="selectOption(this,'mealTime','Snacks')"><div class="option-icon">🍟</div><span class="option-label">Snacks</span><div class="option-sub">3 PM – 6 PM</div></div>
+        <div class="option-card" onclick="selectOption(this,'mealTime','Dinner')"><div class="option-icon">🌙</div><span class="option-label">Dinner</span><div class="option-sub">Evening onwards</div></div>
+        <div class="option-card" onclick="selectOption(this,'mealTime','Late Night')"><div class="option-icon">🌃</div><span class="option-label">Late Night</span><div class="option-sub">After 11 PM</div></div>
+        <div class="option-card" onclick="selectOption(this,'mealTime','Any')"><div class="option-icon">🕐</div><span class="option-label">Anytime</span></div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-back" onclick="nextQuestion(6)">← Back</button>
+        <button class="btn-next" id="q7-next" onclick="showResults()" disabled>🎯 Find My Restaurants</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── RESULTS SCREEN ─── -->
+<div id="results-screen" class="screen">
+  <div class="app-header">
+    <span class="header-logo">Zaika<span>AI</span></span>
+    <div class="header-nav">
+      <button class="active" onclick="switchPanel('reco')">🎯 For You</button>
+      <button onclick="switchPanel('explore')">🗺️ Explore All</button>
+    </div>
+    <div class="user-badge" id="user-badge" title="Signed in">G</div>
+  </div>
+
+  <!-- Recommendations Panel -->
+  <div class="panel active" id="panel-reco">
+    <div class="results-hero">
+      <div class="results-hero-inner">
+        <button class="btn-redo" onclick="redoQuiz()">↺ Redo Quiz</button>
+        <div class="results-title">Your Perfect<br><em id="reco-title-city">Amritsar</em> Picks</div>
+        <div class="results-sub" id="reco-subtitle">Based on your preferences</div>
+        <div class="results-tags" id="reco-tags"></div>
+        <div class="results-count" id="reco-count"></div>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <!-- Top picks -->
+      <div class="reco-section">
+        <div class="section-title">⭐ Top Matches</div>
+        <div class="section-sub">Highest-scoring restaurants for your profile</div>
+        <div class="cards-grid featured" id="top-picks-grid"></div>
+      </div>
+      <!-- More picks -->
+      <div class="reco-section" id="more-section">
+        <div class="section-title">🔥 More You'll Love</div>
+        <div class="section-sub">More great options tailored to you</div>
+        <div class="cards-grid" id="more-picks-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explore Panel -->
+  <div class="panel" id="panel-explore">
+    <div class="explore-filters">
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" id="explore-search" placeholder="Search restaurants, cuisines..." oninput="applyExploreFilters()"/>
+      </div>
+      <select class="filter-select" id="f-veg" onchange="applyExploreFilters()">
+        <option value="">🌿 All Types</option>
+        <option value="Pure Veg">Pure Veg</option>
+        <option value="Non-Veg">Non-Veg</option>
+        <option value="Both">Both</option>
+      </select>
+      <select class="filter-select" id="f-type" onchange="applyExploreFilters()">
+        <option value="">🍽️ All Venues</option>
+        <option value="Street Food">Street Food</option>
+        <option value="Cafe">Café</option>
+        <option value="Fine Dining">Fine Dining</option>
+        <option value="Casual">Casual</option>
+        <option value="Dhaba">Dhaba</option>
+      </select>
+      <select class="filter-select" id="f-budget" onchange="applyExploreFilters()">
+        <option value="">💰 Any Budget</option>
+        <option value="Budget">Budget</option>
+        <option value="Mid-range">Mid-range</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <select class="filter-select" id="f-area" onchange="applyExploreFilters()">
+        <option value="">📍 All Areas</option>
+        <option value="Golden Temple Area">Golden Temple</option>
+        <option value="Hall Bazaar">Hall Bazaar</option>
+        <option value="Lawrence Road">Lawrence Rd</option>
+        <option value="Crystal Chowk">Crystal Chowk</option>
+        <option value="Ranjit Avenue">Ranjit Avenue</option>
+        <option value="Airport Road">Airport Road</option>
+        <option value="Majitha Road">Majitha Road</option>
+        <option value="Batala Road">Batala Road</option>
+      </select>
+      <select class="filter-select" id="f-sort" onchange="applyExploreFilters()">
+        <option value="rating">⭐ Top Rated</option>
+        <option value="budget-low">💰 Budget First</option>
+        <option value="budget-high">💎 Premium First</option>
+        <option value="name">🔤 A–Z</option>
+      </select>
+    </div>
+    <div class="results-summary" id="explore-summary">Showing all 150 restaurants in Amritsar</div>
+    <div class="explore-grid" id="explore-grid"></div>
+  </div>
+</div>
+
+<!-- ─── MODAL ─── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <div class="modal-img" id="modal-img"></div>
+    <div class="modal-body">
+      <div class="modal-header">
+        <div class="modal-name" id="modal-name"></div>
+        <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      </div>
+      <div id="modal-pills" style="margin-bottom:14px"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="modal-grid">
+        <div class="modal-info-item"><div class="modal-info-label">Cuisine</div><div class="modal-info-value" id="modal-cuisine"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Hours</div><div class="modal-info-value" id="modal-hours"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Avg Cost (2)</div><div class="modal-info-value" id="modal-cost"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Parking</div><div class="modal-info-value" id="modal-parking"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Phone</div><div class="modal-info-value" id="modal-phone"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Area</div><div class="modal-info-value" id="modal-area"></div></div>
+      </div>
+      <div class="modal-specialties">
+        <div class="modal-spec-title">Must Try</div>
+        <div id="modal-specs" class="spec-chips"></div>
+      </div>
+      <div class="modal-actions">
+        <a class="btn-maps" id="modal-maps-btn" href="#" target="_blank">📍 Open in Google Maps</a>
+        <a class="btn-call" id="modal-call-btn" href="#" >📞 Call</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const RESTAURANTS = [{"id": 1, "name": "Masala Darbaar", "address": "568 Mahana Singh Rd, opp. Braham Buta Market 📍 Jallianwala Bagh", "description": "Highly-rated all-day restaurant with warm, homely vibe. Breakfast kulchas; hearty North Indian lunch & dinner.", "cuisine": "North Indian", "vegNV": "Both", "rating": 4.6, "hours": "8:30 AM–11 PM", "specialties": ["Honey Chilli Cauliflower", "Gobi Kulcha", "Kesar Lassi"], "phone": "+91 88378 36669", "cost": "₹400–600", "parking": "No", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Mid-range", "photo": "photo-1585937421612-70a008356fbe", "area": "Golden Temple Area"}, {"id": 2, "name": "Bhai Kulwant Singh Kulchian Wale", "address": "Bazar Bikaneria, near Golden Temple 📍 Golden Temple (5 min walk)", "description": "Breakfast institution inside the narrow lanes. Perfectly stuffed, butter-laden kulchas in a wood-fired tandoor.", "cuisine": "Kulcha Stall", "vegNV": "Pure Veg", "rating": 4.3, "hours": "8 AM–4 PM", "specialties": ["Aloo", "Paneer & Mix Kulcha", "Lassi"], "phone": "+91 98155 11905", "cost": "₹150–250", "parking": "No", "type": "Street Food", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Golden Temple Area"}, {"id": 3, "name": "Tawey Wale Amritsar", "address": "Purani Lakkar Mandi, near Jallianwala Bagh 📍 Jallianwala Bagh", "description": "Small soulful eatery run by hardworking women. Fresh homely Punjabi food with the best ginger tea in Amritsar.", "cuisine": "Punjabi / South Indian", "vegNV": "Both", "rating": 4.9, "hours": "6:30 AM–11 PM", "specialties": ["Kulcha", "Lassi", "Ginger Tea"], "phone": "+91 77174 50160", "cost": "₹150–300", "parking": "No", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1606491956689-2ea866880c84", "area": "Golden Temple Area"}, {"id": 4, "name": "Amritsari Rasoi by Golden Grain", "address": "Bazaar Jallianwala Bagh, Ramanand Bagh 📍 Jallianwala Bagh", "description": "Spacious and quiet restaurant near the famous garden. Star dish Afghani Chaap prepared by chef Pankaj.", "cuisine": "North Indian", "vegNV": "Both", "rating": 3.8, "hours": "9 AM–12 AM", "specialties": ["Afghani Chaap", "Daal Makhani", "Naans"], "phone": "+91 86993 50255", "cost": "₹300–500", "parking": "No", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1574484284002-952d92456975", "area": "Golden Temple Area"}, {"id": 5, "name": "AK Amritsari Dhaba & Kulcha Land", "address": "Near Hotel Great Stay, Town Hall, Katra Ahluwalia 📍 Town Hall / Golden Temple", "description": "One of the few eateries opening at 5 AM — essential for early-morning pilgrims. Simple, clean and consistent.", "cuisine": "Punjabi Dhaba", "vegNV": "Both", "rating": 4.4, "hours": "5 AM–2 AM", "specialties": ["Chur Chur Naan", "Aloo Kulcha", "Mushroom Masala"], "phone": "N/A", "cost": "₹150–300", "parking": "No", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Golden Temple Area"}, {"id": 6, "name": "Amritsar Bites", "address": "Golden Temple Rd, beside Raj Darbar Hotel, near Parag Das Chowk 📍 Guru Ka Langar Gate, Golden Temple", "description": "Calm, family-friendly spot walking distance from Harmandir Sahib. Buffet and à la carte; popular with pilgrims.", "cuisine": "North Indian", "vegNV": "Both", "rating": 4.2, "hours": "7 AM–11:30 PM", "specialties": ["Sagar Special", "Makki Roti", "Buffet"], "phone": "N/A", "cost": "₹200–400", "parking": "No", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1546833999-b9f581a1996d", "area": "Golden Temple Area"}, {"id": 7, "name": "Prem Nath Kulche Wale", "address": "Gali No.1, Bagh Ramanand, Katra Ahluwalia 📍 Ramanand Bagh / Jallianwala Bagh back lane", "description": "60-year-old kulcha legend that went viral on YouTube. Patty Kulcha — flaky, layered, drenched in ghee — is unlike anything else.", "cuisine": "Kulcha Stall", "vegNV": "Pure Veg", "rating": 4.7, "hours": "7:30 AM–5 PM (sells out)", "specialties": ["Patty Kulcha", "Chur Chur Kulcha", "Garlic Kulcha"], "phone": "+91 98883 15944", "cost": "₹200–350", "parking": "No", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1551218808-94e220e084d2", "area": "Golden Temple Area"}, {"id": 8, "name": "Kulcha Land – Taste of 5 Aabs", "address": "Kalsar Market, Katra Ahluwalia 📍 Golden Temple back lane", "description": "No-frills locals-only kulcha spot completely off the tourist radar. Generously-spiced chole and great portions.", "cuisine": "Kulcha Stall", "vegNV": "Pure Veg", "rating": 4.4, "hours": "9 AM–4:30 PM", "specialties": ["Masala", "Onion", "Paneer Kulcha"], "phone": "N/A", "cost": "₹100–200", "parking": "No", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1565299507177-b0ac66763828", "area": "Golden Temple Area"}, {"id": 9, "name": "Gurdass Ram Jalebian Wala", "address": "Near Golden Temple lanes, Katra Ahluwalia 📍 Bazar Bikaneria / Golden Temple", "description": "Legendary street-side sweet stall serving fresh jalebis in desi ghee, sizzling from the kadhai since generations.", "cuisine": "Street Sweet Stall", "vegNV": "Pure Veg", "rating": 4.5, "hours": "9:30 AM–11 PM", "specialties": ["Fresh Desi Ghee Jalebis", "Gulab Jamun"], "phone": "+91 77174 60272", "cost": "₹50–150", "parking": "No", "type": "Street Food", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1559847844-5315695dadae", "area": "Golden Temple Area"}, {"id": 10, "name": "Goenka Sweets", "address": "S23/326, Katra Ahluwalia (inside lanes) 📍 Golden Temple lanes", "description": "30-year-old local gem among residents. Pure-ghee sweets without shortcuts. Pinni and Khajoor are legendary.", "cuisine": "Sweet Shop", "vegNV": "Pure Veg", "rating": 4.6, "hours": "8 AM–9 PM", "specialties": ["Pinni", "Rasmali", "Khajoor sweets"], "phone": "N/A", "cost": "₹100–300", "parking": "No", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1555396273-367ea4eb4db5", "area": "Golden Temple Area"}, {"id": 11, "name": "Ghar Di Rasoi (Home Made Food)", "address": "Inside Ghee Mandi, opp. Shivala Veer Bhan, Ramanand Bagh 📍 Ghee Mandi", "description": "Tiny home-kitchen run by a devoted couple. Sarson da saag takes 2.5 hours to prepare. Pav Bhaji leaves visitors speechless.", "cuisine": "Punjabi Home Kitchen", "vegNV": "Pure Veg", "rating": 4.8, "hours": "7:30 AM–7:30 PM", "specialties": ["Makki Roti Sarson da Saag", "Aloo Parantha", "Tea"], "phone": "+91 95929 98781", "cost": "₹150–300", "parking": "No", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1414235077428-338989a2e8c0", "area": "Other Areas"}, {"id": 12, "name": "Marwari Dhaba", "address": "Katra Ahluwalia, inside lanes near Golden Temple 📍 Golden Temple entrance lanes", "description": "Rajasthani-style pocket dhaba serving comforting home-style Puri Chole and Kadhi at very reasonable prices.", "cuisine": "Rajasthani Dhaba", "vegNV": "Pure Veg", "rating": 3.9, "hours": "10 AM–10 PM", "specialties": ["Puri Chole", "Kadhi", "Halwa"], "phone": "+91 98886 79610", "cost": "₹150–250", "parking": "No", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1504674900247-0877df9cc836", "area": "Golden Temple Area"}, {"id": 13, "name": "Bade Bhai Ka Brothers Dhaba", "address": "Near Town Hall, Katra Ahluwalia 📍 Town Hall / Golden Temple", "description": "Sprawling, lively pure-veg dhaba feeding pilgrims for decades. Clean, quick service; hugely popular with families.", "cuisine": "Punjabi Dhaba (Pure Veg)", "vegNV": "Pure Veg", "rating": 4.1, "hours": "8 AM–11:30 PM", "specialties": ["Mango Lassi", "Amritsari Kulcha", "Chole Bhature"], "phone": "+91 98884 11226", "cost": "₹200–350", "parking": "No", "type": "Dhaba", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1565958011703-44f9829ba187", "area": "Golden Temple Area"}, {"id": 14, "name": "Bharawan Da Dhaba", "address": "Near Town Hall, Subhash Park, Katra Ahluwalia 📍 Partition Museum (right opposite)", "description": "A 100+ year-old Amritsar institution. Globally known for Chur Chur Naan and dal makhani. Open till midnight.", "cuisine": "Punjabi Dhaba (Pure Veg)", "vegNV": "Pure Veg", "rating": 3.8, "hours": "7 AM–12 AM", "specialties": ["Dal Makhani", "Chur Chur Naan", "Chole"], "phone": "+91 98031 46469", "cost": "₹200–400", "parking": "No", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1555939594-58d7cb561ad1", "area": "Hall Bazaar"}, {"id": 15, "name": "Ambarsari Food Street", "address": "Town Hall, Katra Ahluwalia 📍 Partition Museum / Town Hall", "description": "Lively food court inside the historic Town Hall building with a small Partition Museum display. AC, good for groups.", "cuisine": "Multi-cuisine Food Court", "vegNV": "Both", "rating": 3.7, "hours": "10 AM–11:30 PM", "specialties": ["Mix Parantha", "Kesar Lassi", "Samosa Chole"], "phone": "N/A", "cost": "₹200–350", "parking": "Street parking", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Hall Bazaar"}, {"id": 16, "name": "Bansal Shahi Thali", "address": "Chowk Phuwara, near Galiara Parking, Town Hall 📍 Chowk Phuwara (Fountain Chowk)", "description": "Multi-purpose spot at the iconic Fountain Chowk. Good for quick breakfasts, thali meals and transit tourists.", "cuisine": "Thali / Kulcha", "vegNV": "Both", "rating": 3.6, "hours": "8 AM–11 PM", "specialties": ["Patty Kulcha", "Chole Bhature", "Tandoori Chai"], "phone": "+91 92169 00921", "cost": "₹150–300", "parking": "Galiara Parking nearby", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1585937421612-70a008356fbe", "area": "Hall Bazaar"}, {"id": 17, "name": "RAJ Punjabi Dhaba", "address": "Hall Bazaar, Katra Ahluwalia 📍 Hall Bazaar Market", "description": "Cheerful, clean dhaba in the heart of Hall Bazaar. Popular with locals and shoppers for its paneer kulcha.", "cuisine": "Punjabi Dhaba", "vegNV": "Both", "rating": 4.1, "hours": "9 AM–11:30 PM", "specialties": ["Paneer Kulcha with Chole", "Cheese Naan", "Chowmein"], "phone": "+91 95928 46174", "cost": "₹150–300", "parking": "No", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Hall Bazaar"}, {"id": 18, "name": "Swagtam Dhaba", "address": "Opp. Ramada Hotel, Goal Hatti Chowk, Hall Bazaar 📍 Goal Hatti Chowk / Ramada Hotel", "description": "Well-reviewed dhaba opposite the Ramada Hotel. Outstanding chole with dahi and chutneys elevate a simple kulcha.", "cuisine": "Punjabi Veg Dhaba", "vegNV": "Pure Veg", "rating": 4.4, "hours": "8:30 AM–11 PM", "specialties": ["Kulcha with dahi-chole", "Parantha Thali"], "phone": "+91 82648 98930", "cost": "₹150–280", "parking": "Street parking", "type": "Dhaba", "spiceLevel": "Spicy", "budgetLevel": "Budget", "photo": "photo-1606491956689-2ea866880c84", "area": "Hall Bazaar"}, {"id": 19, "name": "Punjabi Dhaba (Hall Bazaar)", "address": "Opp. Yes Bank, Goal Hatti Chowk, Hall Bazaar 📍 Goal Hatti Chowk", "description": "One of few non-veg options in the walled city's heart. Stays open till 1 AM for late-night cravings. Aloo Parantha exceptional.", "cuisine": "Punjabi (Veg+Non-Veg)", "vegNV": "Both", "rating": 3.9, "hours": "11:30 AM–1 AM", "specialties": ["Aloo Parantha", "Tandoori Kulcha", "Butter Chicken"], "phone": "+91 98152 70332", "cost": "₹200–400", "parking": "No", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1574484284002-952d92456975", "area": "Hall Bazaar"}, {"id": 20, "name": "Mahajan Sweets", "address": "Chowk Bijli, Hall Bazaar, Katra Bhagian 📍 Chowk Bijli / Hall Bazaar", "description": "60+ year-old sweets institution on Hall Bazaar's main chowk. The legendary Kulfi Falooda and Pindi Ladoo.", "cuisine": "Sweets & Desserts", "vegNV": "Pure Veg", "rating": 4.0, "hours": "9 AM–9 PM", "specialties": ["Kulfi Falooda", "Pindi Ladoo", "Gud Gachak"], "phone": "+91 97792 48544", "cost": "₹80–200", "parking": "No", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Hall Bazaar"}, {"id": 21, "name": "Kesar Da Dhaba", "address": "Chowk Passian, Gali Rajpura, near Telephone Exchange 📍 Chowk Passian / Guru Ka Mahal", "description": "Amritsar's most famous dhaba — over 100 years old, founded before Partition. Overnight dal makhani cooked on dum has no equal.", "cuisine": "Punjabi Veg Dhaba", "vegNV": "Pure Veg", "rating": 4.0, "hours": "12 PM–11 PM", "specialties": ["Overnight Dal Makhani", "Lachha Paratha", "Thali"], "phone": "+91 183 255 2103", "cost": "₹200–400", "parking": "Street nearby", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1546833999-b9f581a1996d", "area": "Other Areas"}, {"id": 22, "name": "Babe Da Dhaba", "address": "Chowk Passian, near Guru Ka Mahal, Shastri Market 📍 Chowk Passian — 50m from Kesar Da Dhaba", "description": "100+ year-old hidden gem. Everything cooked in pure desi ghee. Special ₹200 thali is one of the best value meals in Punjab.", "cuisine": "Punjabi Pure Ghee Dhaba", "vegNV": "Pure Veg", "rating": 4.4, "hours": "9:30 AM–11 PM", "specialties": ["Rajma", "Dal Makhani", "Special Thali ₹200"], "phone": "+91 98883 87995", "cost": "₹200–350", "parking": "Street nearby", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1551218808-94e220e084d2", "area": "Other Areas"}, {"id": 23, "name": "Amar Chand & Sons", "address": "Guru Bazar Rd, Darshani Deori, Papraha Wala Bazar 📍 Darshani Deori / Guru Bazar", "description": "75+ year heritage sweet shop — the most principled in Punjab. No artificial colours, preservatives or flavours ever. Patisa is extraordinary.", "cuisine": "Heritage Sweet Shop", "vegNV": "Pure Veg", "rating": 4.4, "hours": "8 AM–8 PM", "specialties": ["Patisa", "Pinni", "Desi Ghee Banana Barfi — zero additives"], "phone": "+91 98140 50416", "cost": "₹100–400", "parking": "No", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1565299507177-b0ac66763828", "area": "Other Areas"}, {"id": 24, "name": "Gian di Lassi", "address": "Golden Temple Outer Rd, opp. Regent Cinema, Katra Sher Singh 📍 Regent Cinema Chowk", "description": "Amritsar's most iconic lassi shop — a British-era institution. Peda Lassi: thick hand-churned dahi, crushed mawa peda and malai.", "cuisine": "Lassi Shop (British-era)", "vegNV": "Pure Veg", "rating": 4.4, "hours": "6 AM–9:30 PM", "specialties": ["Peda Lassi", "Sweet Lassi", "Seasonal specials"], "phone": "+91 94173 19497", "cost": "₹65–120", "parking": "No", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1559847844-5315695dadae", "area": "Golden Temple Area"}, {"id": 25, "name": "Amritsari Special Puri Channa", "address": "T10-41, Golden Temple Outer Rd, near Regent Cinema Chowk 📍 Regent Cinema Chowk", "description": "A tiny breakfast stall almost no tourist knows. Impossibly light crispy puris with spiced channa at just ₹30 a plate. True hidden gem.", "cuisine": "Street Food Stall", "vegNV": "Pure Veg", "rating": 4.9, "hours": "6:30 AM–7:30 PM", "specialties": ["Crispy Puri Channa ₹30/plate"], "phone": "+91 98159 18387", "cost": "₹50–100", "parking": "No", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1555396273-367ea4eb4db5", "area": "Golden Temple Area"}, {"id": 26, "name": "Jaan Nutri Kulcha", "address": "Katra Sher Singh lanes, Katra Ahluwalia 📍 Katra Sher Singh / near DAV College Rd", "description": "Popular street-side nutri kulcha stall with a loyal following. Textured soya keema filling with red chutney in a crisp kulcha.", "cuisine": "Kulcha / Street Food", "vegNV": "Pure Veg", "rating": 4.2, "hours": "10 AM–5 PM only", "specialties": ["Nutri Kulcha with red chutney & onions"], "phone": "N/A", "cost": "₹60–120", "parking": "No", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1414235077428-338989a2e8c0", "area": "Other Areas"}, {"id": 27, "name": "Taj Kashmiri Hotel", "address": "Way into Golden Temple Rd, Katra Sher Singh 📍 Golden Temple entrance, Katra Sher Singh", "description": "One of very few spots in the walled city serving authentic Kashmiri cuisine — rare for Kashmiri visitors and pilgrims.", "cuisine": "Kashmiri Cuisine", "vegNV": "Both", "rating": 3.7, "hours": "6 AM–12 AM", "specialties": ["Kashmiri Rogan Josh", "Wazwan dishes", "Noon Chai"], "phone": "+91 85668 59357", "cost": "₹300–500", "parking": "No", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1504674900247-0877df9cc836", "area": "Golden Temple Area"}, {"id": 28, "name": "Vaishno Bhojan Bhandar", "address": "Shop 632/1, near Katra Sher Singh, Subhash Park 📍 Katra Sher Singh Chowk", "description": "Budget-friendly pure-veg dhaba loved by local workers. Mathi chole and curry chawal in generous portions at very low prices.", "cuisine": "Pure Veg Budget Dhaba", "vegNV": "Pure Veg", "rating": 3.9, "hours": "9 AM–11:30 PM", "specialties": ["Stuffed Kulcha", "Mathi Chole", "Curry Chawal"], "phone": "+91 98159 08111", "cost": "₹100–200", "parking": "No", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1565958011703-44f9829ba187", "area": "Other Areas"}, {"id": 29, "name": "Ahuja Lassi", "address": "Inside B.K. Dutt Gate, Dhab Khatikan, Katra Ahluwalia 📍 B.K. Dutt Gate / Lohgarh area", "description": "Serious contender for Amritsar's best lassi. Pure, natural, lighter than peda lassi shops — no artificial essence, no gimmicks.", "cuisine": "Lassi Shop", "vegNV": "Pure Veg", "rating": 4.3, "hours": "7:30 AM–10 PM", "specialties": ["Sweet Lassi", "Dahi-Shakkar", "Cold Coffee"], "phone": "+91 85438 59000", "cost": "₹50–100", "parking": "No", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1555939594-58d7cb561ad1", "area": "Other Areas"}, {"id": 30, "name": "Shaina Diner", "address": "Inside Lohgarh Gate, Katra Ahluwalia 📍 Lohgarh Gate", "description": "Private-events-friendly diner inside the walled city, offering non-veg Kashmiri and Punjabi dishes. Popular for small parties.", "cuisine": "Diner / Punjabi + Kashmiri Non-Veg", "vegNV": "Non-Veg", "rating": 3.6, "hours": "1 PM–11:30 AM (next day)", "specialties": ["Tandoori Non-Veg items", "Private party bookings"], "phone": "+91 183 506 5919", "cost": "₹400–700", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Other Areas"}, {"id": 31, "name": "Sai Vaishno Dhaba", "address": "Inside B.K. Dutt Gate / Lohgarh Gate 📍 Lohgarh Gate / B.K. Dutt Gate", "description": "Clean, budget-friendly veg dhaba inside the western gate. The lacha parantha is soft, well-layered and very affordable.", "cuisine": "Veg Dhaba", "vegNV": "Pure Veg", "rating": 4.1, "hours": "9:15 AM–11:30 PM", "specialties": ["Naan", "Lacha Parantha", "Rajma Chawal"], "phone": "+91 96464 73628", "cost": "₹100–200", "parking": "No", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1585937421612-70a008356fbe", "area": "Other Areas"}, {"id": 32, "name": "Ram Samose Wala", "address": "Inside Lohgarh Gate, opp. Gurudwara, Katra Parda 📍 Gurudwara near Lohgarh Gate", "description": "One of the oldest snack stalls in Amritsar — tiny samosas at ₹10 for 3, crispy and packed with flavour. Kachori equally beloved.", "cuisine": "Street Snack Stall (100+ yrs)", "vegNV": "Pure Veg", "rating": 4.2, "hours": "10 AM–8 PM", "specialties": ["Samosa (₹10 for 3)", "Kachori", "Gulab Jamun"], "phone": "+91 94654 77189", "cost": "₹30–80", "parking": "No", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Other Areas"}, {"id": 33, "name": "Kanahya Sweets (The Original)", "address": "Fullan Wala Bazar, near Lohgarh Gate area 📍 Lohgarh Gate / Fullan Wala Bazar", "description": "Beloved sweet-and-snack institution — among top puri-chana joints in North India. Desi ghee Puri Chana and Dal wali Pinni legendary.", "cuisine": "Sweet Shop & Snack Stall", "vegNV": "Pure Veg", "rating": 4.3, "hours": "7 AM–9 PM", "specialties": ["Desi Ghee Puri Chana", "Dal Wali Pinni"], "phone": "+91 96464 24760", "cost": "₹80–200", "parking": "No", "type": "Street Food", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1606491956689-2ea866880c84", "area": "Other Areas"}, {"id": 34, "name": "Sangat Rasoi", "address": "Shaheeda Sahib Gurdwara, Inside Ramgarhia Gate, Chowk Chabutra 📍 Ramgarhia Gate / Shaheeda Sahib Gurdwara", "description": "Spacious AC restaurant inside Ramgarhia Gate. Dosa, chole, kulcha and lassi all consistently good. Best value restaurant in the area.", "cuisine": "North Indian / South Indian", "vegNV": "Pure Veg", "rating": 4.5, "hours": "7 AM–11 PM", "specialties": ["Party Kulcha", "Puri Chole", "Kesar Lassi"], "phone": "+91 72040 00029", "cost": "₹200–350", "parking": "Street nearby", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1574484284002-952d92456975", "area": "Other Areas"}, {"id": 35, "name": "Om Milk Bhandar & Sweet Shop", "address": "Inside Chattiwind Gate, Moni Chowk, Nimak Mandi 📍 Chattiwind Gate / Nimak Mandi", "description": "One of the finest milk-sweet shops in Amritsar. Kalakand Barfi and Besan Barfi made with fresh desi ghee daily — visitors leave with boxes.", "cuisine": "Milk Sweets & Lassi", "vegNV": "Pure Veg", "rating": 4.8, "hours": "7 AM–10:30 PM", "specialties": ["Kalakand Barfi", "Besan Barfi", "Fresh Lassi"], "phone": "+91 97796 92831", "cost": "₹100–400", "parking": "Street nearby", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Other Areas"}, {"id": 36, "name": "Hangries Amritsar", "address": "169, Sultanwind Rd, near Kalra Hospital, Ajit Nagar 📍 Kalra Hospital, Sultanwind Road", "description": "Amritsar's highest-rated casual eatery by review count — nearly 6,000 reviews at 4.9 stars. Budget-friendly pizzas, burgers and shakes.", "cuisine": "Cafe / Fast Food", "vegNV": "Both", "rating": 4.9, "hours": "10 AM–11 PM", "specialties": ["Mushroom Duplex", "Strawberry Shake", "Pizza"], "phone": "+91 82913 82913", "cost": "₹200–400", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1546833999-b9f581a1996d", "area": "Other Areas"}, {"id": 37, "name": "Novelty Sweets & Restaurant", "address": "Novelty Mall, Novelty Chowk, Lawrence Road 📍 Novelty Chowk", "description": "Lawrence Road institution with over 14,000 reviews — Amritsar's busiest sweet shop and snack counter. Kachori queues form every morning.", "cuisine": "Sweets / Snacks / Restaurant", "vegNV": "Pure Veg", "rating": 4.5, "hours": "8 AM–12 AM", "specialties": ["Kachori", "Puri Chole", "Wadi"], "phone": "+91 70098 04100", "cost": "₹100–300", "parking": "Mall parking", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1551218808-94e220e084d2", "area": "Lawrence Road"}, {"id": 38, "name": "Surjit Food Plaza", "address": "1-2, Dosanda Singh Rd, Lawrence Road Extension 📍 Lawrence Road Extension", "description": "Non-veg legend since the 1950s. Tandoori Chicken here is juicy and smoky — not the typical red food-coloured version. Fish Tikka stellar.", "cuisine": "Punjabi Non-Veg", "vegNV": "Non-Veg", "rating": 4.0, "hours": "11 AM–11:30 PM", "specialties": ["Tandoori Chicken", "Fish Tikka", "Tawa Chicken"], "phone": "+91 98037 55555", "cost": "₹700–1200", "parking": "Limited street", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565299507177-b0ac66763828", "area": "Lawrence Road"}, {"id": 39, "name": "Sandoz Restaurant", "address": "12, Lawrence Road, beside Apsara Toys Centre, Dayanand Nagar 📍 Lawrence Road", "description": "Reliable hotel restaurant with diverse North Indian and Continental menu. Exceptionally buttery Amritsari Kulchas and warm hospitality.", "cuisine": "Multi-cuisine + Bar", "vegNV": "Both", "rating": 4.5, "hours": "8:30 AM–12 AM", "specialties": ["Amritsari Kulcha with Chole", "Continental dishes", "Breakfast"], "phone": "+91 91674 33635", "cost": "₹500–900", "parking": "Hotel parking", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1559847844-5315695dadae", "area": "Lawrence Road"}, {"id": 40, "name": "Sanjha Chulha", "address": "Lawrence Rd, Opp. BBK DAV College, Joshi Colony 📍 BBK DAV College", "description": "Consistently popular kulcha restaurant on Lawrence Road strip. Air-conditioned, reasonable pricing, solid family option after darshan.", "cuisine": "Punjabi Veg", "vegNV": "Pure Veg", "rating": 4.0, "hours": "9 AM–11:50 PM", "specialties": ["Aloo Pyaaz Kulcha", "Dal Makhani", "Lassi"], "phone": "+91 183 256 6855", "cost": "₹150–350", "parking": "Street parking", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1555396273-367ea4eb4db5", "area": "Lawrence Road"}, {"id": 41, "name": "Chef's Theory Amritsar", "address": "Ramee Collextion Hotel, 52-A, Police Line Rd, White Avenue 📍 White Avenue / near Lawrence Rd", "description": "Amritsar's highest-rated hotel restaurant — cozy, serene and professional. The Continental menu is genuinely excellent, a rarity here.", "cuisine": "Continental / Multi-cuisine", "vegNV": "Both", "rating": 4.9, "hours": "8 AM–11 PM", "specialties": ["Continental specials", "Chef's Special dishes", "Breakfast Spread"], "phone": "+91 90569 51206", "cost": "₹800–1400", "parking": "Hotel parking", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1414235077428-338989a2e8c0", "area": "Lawrence Road"}, {"id": 42, "name": "Lazaari Restaurant & Bar", "address": "14-C, Lawrence Road, Dayanand Nagar 📍 Lawrence Road", "description": "Modern restro-bar inside Treebo Mustard Inn. Well-designed ambience with good North Indian fare. Slightly premium but worth it for atmosphere.", "cuisine": "North Indian / Bar", "vegNV": "Both", "rating": 4.4, "hours": "12 PM–11:30 PM", "specialties": ["North Indian grills", "cocktails", "relaxed evening dining"], "phone": "+91 72308 00008", "cost": "₹700–1200", "parking": "Hotel parking", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1504674900247-0877df9cc836", "area": "Lawrence Road"}, {"id": 43, "name": "Lawrence Restobar", "address": "Hotel Lawrence, 6, Lawrence Road, Joshi Colony 📍 Lawrence Road / near Novelty Chowk", "description": "Popular local hangout inside Hotel Lawrence — reliable North Indian food with a decent bar. Busy in evenings with the after-work crowd.", "cuisine": "Bar & Restaurant", "vegNV": "Both", "rating": 4.0, "hours": "11 AM–11:30 PM", "specialties": ["North Indian mains", "Bar selection"], "phone": "+91 183 240 0105", "cost": "₹600–1000", "parking": "Street parking", "type": "Fine Dining", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1565958011703-44f9829ba187", "area": "Lawrence Road"}, {"id": 44, "name": "Bratty's Cafe", "address": "Omaxe Novelty Mall, Lawrence Rd, beside Burger King 📍 Novelty Chowk", "description": "Artisan coffee shop inside Omaxe Mall. Rose Petal Latte and Mushroom Bagel have a cult following. Creative menu with excellent coffee.", "cuisine": "Specialty Coffee & Cafe", "vegNV": "Both", "rating": 4.7, "hours": "8:30 AM–11 PM", "specialties": ["Hazelnut Latte", "Mushroom Bagel", "Korean Chicken Bun"], "phone": "+91 77174 10441", "cost": "₹400–700", "parking": "Mall parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1555939594-58d7cb561ad1", "area": "Lawrence Road"}, {"id": 45, "name": "The Gully Kitchen", "address": "15-A, Lawrence Road, opp. Stelatos Showroom 📍 Lawrence Road", "description": "Charming free-standing Arabica coffee bar run by passionate owner Arpi. Perfect if you're craving a proper specialty cappuccino in Amritsar.", "cuisine": "Specialty Coffee Stand", "vegNV": "Both", "rating": 5.0, "hours": "12 PM–11 PM", "specialties": ["Arabica Cappuccino", "Hazelnut Coffee", "Chocolate Strawberry"], "phone": "+91 88470 90460", "cost": "₹200–400", "parking": "Street parking", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Lawrence Road"}, {"id": 46, "name": "Amritsar Haveli (Shivaji Park)", "address": "Shivaji Park Rd, near Mata Lal Devi Mandir, Mohindra Colony 📍 Shivaji Park / Rani Ka Bagh", "description": "Elegantly decorated traditional Punjabi restaurant inspired by old Amritsari havelis. Dal Makhani with butter naan here is absolutely divine.", "cuisine": "Traditional Punjabi Veg", "vegNV": "Pure Veg", "rating": 4.8, "hours": "9 AM–11:30 PM", "specialties": ["Dal Makhani", "Shahi Paneer", "Butter Naan"], "phone": "N/A", "cost": "₹400–700", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1585937421612-70a008356fbe", "area": "Other Areas"}, {"id": 47, "name": "Crystal Restaurant", "address": "Crystal Chowk, Queens Road, near Company Bagh 📍 Crystal Chowk", "description": "Amritsar dining institution since the 1970s. Still packs a crowd for Murgh Makhani, Amritsari Fish and warm old-school service.", "cuisine": "Multi-cuisine + Bar", "vegNV": "Both", "rating": 3.9, "hours": "11:30 AM–11:30 PM", "specialties": ["Murgh Makhani", "Amritsari Fish", "Mutton Seekh Kebab"], "phone": "+91 183 222 5555", "cost": "₹700–1200", "parking": "Limited street", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Crystal Chowk"}, {"id": 48, "name": "New Friends Dhaba", "address": "219, Queens Road, Crystal Chowk 📍 Crystal Chowk", "description": "Amritsar's go-to late-night non-veg spot — open till 2 AM. The Keema Naan is stuffed generously and Butter Chicken is rich, not cloyingly sweet.", "cuisine": "Punjabi Non-Veg Dhaba", "vegNV": "Non-Veg", "rating": 4.0, "hours": "12 PM–2 AM", "specialties": ["Keema Naan", "Butter Chicken", "Rogan Josh"], "phone": "+91 99156 80111", "cost": "₹700–1200", "parking": "Street parking", "type": "Dhaba", "spiceLevel": "Mild", "budgetLevel": "Premium", "photo": "photo-1606491956689-2ea866880c84", "area": "Crystal Chowk"}, {"id": 49, "name": "Avani Garden by Devils Night", "address": "Hotel Basera, Queens Rd, Crystal Chowk 📍 Crystal Chowk", "description": "Upbeat restaurant-bar with enjoyable atmosphere, live DJ and great Butter Chicken. International travellers repeatedly return here.", "cuisine": "Multi-cuisine + Bar", "vegNV": "Both", "rating": 4.5, "hours": "11 AM–12 AM", "specialties": ["Butter Chicken", "Assorted Starters", "Cocktails"], "phone": "+91 88475 52557", "cost": "₹800–1400", "parking": "Hotel Basera parking", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1574484284002-952d92456975", "area": "Crystal Chowk"}, {"id": 50, "name": "Sky Garden", "address": "#222, 4th Floor, Queens Road, Crystal Chowk 📍 Crystal Chowk", "description": "Rooftop lounge-restaurant on Queens Road — excellent for birthday parties and group outings. Live DJ on weekends and pleasant city view.", "cuisine": "Multi-cuisine Rooftop", "vegNV": "Both", "rating": 4.5, "hours": "12 PM–12 AM", "specialties": ["Party platters", "mocktails", "grills"], "phone": "N/A", "cost": "₹700–1200", "parking": "Street parking", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Crystal Chowk"}, {"id": 51, "name": "Sabri Bhatura Shop", "address": "Queens Road, near OBC Bank, Crystal Chowk 📍 Crystal Chowk", "description": "Clean, AC bhatura shop with a cult following. Stuffed bhature are crispy and well-loaded with tangy chole. Desi Ghee Halwa is the sleeper star.", "cuisine": "Punjabi Chole Bhature", "vegNV": "Pure Veg", "rating": 4.3, "hours": "8:30 AM–6 PM", "specialties": ["Stuffed Bhature", "Chole", "Desi Ghee Halwa"], "phone": "+91 95010 15786", "cost": "₹150–300", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1546833999-b9f581a1996d", "area": "Crystal Chowk"}, {"id": 52, "name": "A One Kulfa", "address": "3, Queens Rd, near Victoria Hotel, Crystal Chowk 📍 Crystal Chowk", "description": "Definitive kulfa-falooda destination since decades. Malai Kulfa is dense and creamy; Rabri Falooda is a meal in itself. Open late.", "cuisine": "Dessert / Kulfa Shop", "vegNV": "Pure Veg", "rating": 4.3, "hours": "2 PM–12 AM", "specialties": ["Malai Kulfa", "Rabri Falooda", "Phirni with Rabri"], "phone": "+91 98721 01109", "cost": "₹100–250", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1551218808-94e220e084d2", "area": "Crystal Chowk"}, {"id": 53, "name": "Shirazs Orchid", "address": "3-4, Queens Rd, Crystal Chowk 📍 Crystal Chowk", "description": "Multi-cuisine family restaurant with calm ambience and a good spread of Indian, Chinese and Continental dishes. DJ on request for parties.", "cuisine": "Multi-cuisine Restaurant", "vegNV": "Both", "rating": 4.2, "hours": "11 AM–11 PM", "specialties": ["Butter Chicken", "Chinese starters", "Multi-cuisine thalis"], "phone": "N/A", "cost": "₹500–900", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565299507177-b0ac66763828", "area": "Crystal Chowk"}, {"id": 54, "name": "Sugar N Spice", "address": "Queens Rd, opp. PNB Bank, Crystal Chowk 📍 Crystal Chowk", "description": "Recently opened, well-run cafe and restaurant. Kulfa rivals A One — try the Amritsari Kulfa with kesar. Good casual dinners.", "cuisine": "Cafe / North Indian", "vegNV": "Both", "rating": 4.1, "hours": "12 PM–1 AM", "specialties": ["Kadhai Paneer", "Kesar Badam Kulfa", "Mix Veg Thali"], "phone": "+91 97797 80039", "cost": "₹400–800", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1559847844-5315695dadae", "area": "Crystal Chowk"}, {"id": 55, "name": "Kava Grill & Lounge (Fairfield by Marriott)", "address": "Albert Road, INA Colony 📍 Amritsar Railway Station (2 min)", "description": "Finest restaurant near Amritsar Railway Station — part of Fairfield by Marriott. Thai Red Curry is exceptional. Great pre-train dining.", "cuisine": "Fine Dining / Continental + North Indian", "vegNV": "Both", "rating": 4.6, "hours": "10 AM–10:30 PM", "specialties": ["Wok-Tossed Noodles", "Honey Chilli Potato", "Amritsari Platter"], "phone": "+91 77172 44440", "cost": "₹1200–2000", "parking": "Hotel valet", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1555396273-367ea4eb4db5", "area": "Other Areas"}, {"id": 56, "name": "The Gram Amritsar", "address": "36-A, Mall Road, Green Avenue 📍 Mall Road / Green Avenue", "description": "Trendy, music-forward bar-restaurant on Mall Road. Good for younger Amritsar crowd wanting cocktails with Chilli Chicken Pizza.", "cuisine": "Multi-cuisine + Bar", "vegNV": "Both", "rating": 3.9, "hours": "12 PM–1 AM", "specialties": ["Chilli Chicken Pizza", "Veg Tandoori Platter", "Mocktails"], "phone": "+91 95929 43926", "cost": "₹700–1200", "parking": "Street parking", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1414235077428-338989a2e8c0", "area": "Other Areas"}, {"id": 57, "name": "Foodeez Multicuisine Restaurant", "address": "Grand Trunk Road, Rani Ka Bagh, INA Colony 📍 GT Road / Rani Ka Bagh", "description": "Well-established multi-cuisine restaurant and bar near GT Road. Generous portions of North Indian non-veg. Mutton Rara with Missi Roti standout.", "cuisine": "Multi-cuisine + Bar", "vegNV": "Both", "rating": 4.2, "hours": "11 AM–11 PM", "specialties": ["Mutton Rara", "Missi Roti", "Non-Veg Punjabi mains"], "phone": "+91 97801 00216", "cost": "₹600–1000", "parking": "Hotel parking", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1504674900247-0877df9cc836", "area": "GT Road"}, {"id": 58, "name": "SGF Amritsar", "address": "116/19, Queens Road, near Railway Station 📍 Amritsar Railway Station", "description": "Late-night non-veg spot on Queens Road open till 3 AM — rare in Amritsar. Popular with night-shift staff and late-night revellers.", "cuisine": "Multi-cuisine (Non-Veg focus)", "vegNV": "Both", "rating": 4.5, "hours": "12 PM–3 AM", "specialties": ["Late-night non-veg meals", "Grills", "Punjabi staples"], "phone": "+91 85859 99505", "cost": "₹500–900", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565958011703-44f9829ba187", "area": "Other Areas"}, {"id": 59, "name": "Haveli Restaurant", "address": "11, District Shopping Complex, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "Amritsar's most celebrated traditional Punjabi restaurant. Village-style props, charpoys and folk art. Sarson da Saag tastes like dadi ka khana.", "cuisine": "Traditional Punjabi Veg", "vegNV": "Pure Veg", "rating": 4.7, "hours": "8 AM–11 PM", "specialties": ["Sarson da Saag+Makki di Roti", "Kadhi", "Dal Makhani"], "phone": "+91 77172 99000", "cost": "₹500–900", "parking": "Yes (mall lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555939594-58d7cb561ad1", "area": "Ranjit Avenue"}, {"id": 60, "name": "The Brick House Kitchen (BHK)", "address": "B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "One of Ranjit Avenue's most stylish restaurants. Warm brick-interior, thoughtful lighting and diverse menu: Indian, Continental, Chinese, Italian.", "cuisine": "Multi-cuisine Cafe + Bakery", "vegNV": "Both", "rating": 4.4, "hours": "10:30 AM–11:45 PM", "specialties": ["Bakery items", "Continental pasta", "Multicuisine mains"], "phone": "N/A", "cost": "₹600–1000", "parking": "Yes (street+building)", "type": "Cafe", "spiceLevel": "Mild", "budgetLevel": "Premium", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Ranjit Avenue"}, {"id": 61, "name": "Grain by Elgin (Pan-Asian European)", "address": "SCO 35 & 36, 3rd Floor, A-Block, Ranjit Avenue 📍 Ranjit Avenue A-Block", "description": "Amritsar's most refined continental dining. Serves authentic European and Pan-Asian dishes without Indianising them. Hot chocolate with cookie jar iconic.", "cuisine": "Pan-Asian / European Fine Dining", "vegNV": "Both", "rating": 4.5, "hours": "12 PM–11:30 PM", "specialties": ["Hot Chocolate", "Chicken Bagel", "European Mains"], "phone": "+91 70879 35000", "cost": "₹900–1600", "parking": "Yes (street+building)", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1585937421612-70a008356fbe", "area": "Ranjit Avenue"}, {"id": 62, "name": "La Moda Cafe & Restaurant", "address": "SCO-44, 2nd Floor, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "Sophisticated dining spot with beautiful plating and rich, aromatic curries. Lamb Raan falls off the bone. Perfect for date nights.", "cuisine": "Multi-cuisine Cafe", "vegNV": "Both", "rating": 4.7, "hours": "11 AM–11 PM", "specialties": ["Lamb Raan", "Butter Chicken", "Continental Pasta"], "phone": "+91 99155 17637", "cost": "₹700–1200", "parking": "Yes (street)", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Ranjit Avenue"}, {"id": 63, "name": "Diago Rooftop Restaurant & Bar", "address": "SCO 38-39-97, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block / near F7 Gym", "description": "High-energy, jazzy rooftop lounge with panoramic city views, live music on weekends and ambitious menu covering sushi, Italian and Asian fusion.", "cuisine": "Rooftop Multi-cuisine + Bar", "vegNV": "Both", "rating": 4.0, "hours": "12:30 PM–12:30 AM", "specialties": ["Sushi", "Mushroom Bao", "Pizza"], "phone": "+91 73473 72958", "cost": "₹1200–1800", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1606491956689-2ea866880c84", "area": "Ranjit Avenue"}, {"id": 64, "name": "Diora Rooftop Restaurant", "address": "SCO-74, 6th Floor, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "Calm, elegant 6th-floor rooftop restaurant — Amritsar's best for a quiet upscale evening. White Mocha Coffee is world-class.", "cuisine": "Multi-cuisine Rooftop", "vegNV": "Both", "rating": 4.5, "hours": "12 PM–1 AM", "specialties": ["Butter Chicken Pizza", "White Mocha Coffee", "Chicken Chaap"], "phone": "+91 78892 11056", "cost": "₹900–1500", "parking": "Yes (street)", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1574484284002-952d92456975", "area": "Ranjit Avenue"}, {"id": 65, "name": "Kake da Hotel", "address": "SCO 38, above KFC, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block / KFC", "description": "Popular multi-cuisine restaurant known for excellent North Indian non-veg. Butter Chicken and Amritsari Fish are consistently brilliant.", "cuisine": "North Indian Non-Veg", "vegNV": "Both", "rating": 4.4, "hours": "12 PM–11 PM", "specialties": ["Butter Chicken", "Amritsari Fish", "Chicken Curry"], "phone": "+91 72058 31999", "cost": "₹600–1000", "parking": "Yes (street)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Ranjit Avenue"}, {"id": 66, "name": "Baba's Amritsar", "address": "SCO 74, Basement, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "Luxurious basement restaurant that feels surprisingly upscale. Baba Butter Chicken and Mushroom Double Decker are crowd favourites.", "cuisine": "North Indian + Non-Veg", "vegNV": "Both", "rating": 4.8, "hours": "12 PM–11 PM", "specialties": ["Baba Butter Chicken", "Non-Veg Platter", "Mushroom Double Decker"], "phone": "N/A", "cost": "₹700–1200", "parking": "Yes (building)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1546833999-b9f581a1996d", "area": "Ranjit Avenue"}, {"id": 67, "name": "Sagar Ratna", "address": "SCO-110-111, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "Best South Indian restaurant in Amritsar, consistently. Chettinad Dosa is crispy and authentically spiced. Idli Chaat is a wonderful brunch.", "cuisine": "South Indian Veg", "vegNV": "Pure Veg", "rating": 4.5, "hours": "10 AM–11 PM", "specialties": ["Chettinad Dosa", "Idli Chaat", "Sambhar Vada"], "phone": "+91 98155 80088", "cost": "₹400–700", "parking": "Yes (street)", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1551218808-94e220e084d2", "area": "Ranjit Avenue"}, {"id": 68, "name": "Olive 97", "address": "SCO 2, Mezzanine Floor, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "Instagram-popular restaurant for dim sum, bao buns and East Asian-inspired dishes. Good cocktails complement the food well.", "cuisine": "Multi-cuisine / Dim Sum", "vegNV": "Both", "rating": 4.5, "hours": "11 AM–11:30 PM", "specialties": ["Dim Sum", "Bao Buns", "Indian curries"], "phone": "+91 85680 80803", "cost": "₹800–1400", "parking": "Yes (street)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565299507177-b0ac66763828", "area": "Ranjit Avenue"}, {"id": 69, "name": "Ziva (Holiday Inn Amritsar)", "address": "Holiday Inn, B-Block, Ranjit Avenue 📍 Holiday Inn Ranjit Avenue", "description": "Finest all-day dining restaurant in Amritsar's hospitality circuit. Thai Red Curry is extraordinary; breakfast spread rivals 5-star metro hotels.", "cuisine": "All-day Fine Dining (5-star)", "vegNV": "Both", "rating": 4.8, "hours": "7 AM–11 PM", "specialties": ["Thai Red Curry", "Caesar Salad", "Amritsari Platter"], "phone": "+91 85588 09115", "cost": "₹1200–2000", "parking": "Yes (hotel valet)", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1559847844-5315695dadae", "area": "Ranjit Avenue"}, {"id": 70, "name": "Pyramid Amritsar", "address": "SCO 11-12, 6th Floor, above Haveli, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block / above Haveli", "description": "Amritsar's most complete entertainment venue — restaurant, lounge, bar, microbrewery and nightclub all in one. Rooftop view is stunning.", "cuisine": "Multi-cuisine + Microbrewery + Bar", "vegNV": "Both", "rating": 4.6, "hours": "12 PM–1 AM", "specialties": ["Craft Beer", "Jamaican Jerk Chicken", "Pizza"], "phone": "+91 85499 00002", "cost": "₹1200–2200", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555396273-367ea4eb4db5", "area": "Ranjit Avenue"}, {"id": 71, "name": "The Liquid Room", "address": "SCO 34, A-Block Ranjit Avenue, near Starbucks 📍 Ranjit Avenue / near Starbucks", "description": "One of Amritsar's most popular pubs and clubs, in the basement near Haldirams. Loud DJ, strong drinks and Indian cuisine for group celebrations.", "cuisine": "Pub / Bar + North Indian", "vegNV": "Both", "rating": 4.6, "hours": "12 PM–1 AM", "specialties": ["Honey Chilli Potato", "Kebabs", "Beer"], "phone": "+91 98765 41023", "cost": "₹1000–1800", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1414235077428-338989a2e8c0", "area": "Ranjit Avenue"}, {"id": 72, "name": "Kafeine", "address": "SCO 75, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "24/7 restaurant-cafe in the heart of Ranjit Avenue. The Rara Chicken with Mirchi Lacha Paratha is their star non-veg dish. Coffee is strong.", "cuisine": "Multi-cuisine Cafe (24-hour)", "vegNV": "Both", "rating": 4.3, "hours": "Open 24 hours", "specialties": ["Rara Chicken", "Butter Chicken", "Hazelnut Latte"], "phone": "+91 98888 42424", "cost": "₹600–1000", "parking": "Yes (street)", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1504674900247-0877df9cc836", "area": "Ranjit Avenue"}, {"id": 73, "name": "Grab & Go by Grain", "address": "SCO 2, 97 Acre Scheme, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "Vibrant music-forward cafe from the Grain by Elgin group. Brilliant playlist (80s disco on Sundays!), excellent Chicken Bagel.", "cuisine": "Modern Cafe / Snacks", "vegNV": "Both", "rating": 4.7, "hours": "10 AM–5 AM", "specialties": ["Chicken Bagel", "Himalayan Coffee", "Weekend brunch specials"], "phone": "+91 82971 30001", "cost": "₹500–900", "parking": "Yes (street)", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565958011703-44f9829ba187", "area": "Ranjit Avenue"}, {"id": 74, "name": "The S Lounge Rooftop by Swagath", "address": "SCO 54-55, 7th Floor, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "Stunning 7th-floor rooftop lounge with exceptional city views. Cozy aesthetic, attentive service. One of Ranjit Avenue's best-kept secrets.", "cuisine": "Multi-cuisine Rooftop Lounge", "vegNV": "Both", "rating": 4.9, "hours": "2 PM–1 AM", "specialties": ["Rooftop view", "Multi-cuisine menu", "Cocktails"], "phone": "+91 98759 01638", "cost": "₹900–1600", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555939594-58d7cb561ad1", "area": "Ranjit Avenue"}, {"id": 75, "name": "Firangi Dhaba", "address": "SCO 117, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "Dhaba-themed fine-dining restaurant with fireplaces, rustic decor and live music. The Jaljeera Mojito is a viral hit.", "cuisine": "Dhaba-style Fine Dining", "vegNV": "Both", "rating": 4.2, "hours": "11:30 AM–12:30 AM", "specialties": ["Jaljeera Mojito", "North Indian mains", "Live Music"], "phone": "+91 87594 00009", "cost": "₹700–1200", "parking": "Yes (street)", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Ranjit Avenue"}, {"id": 76, "name": "Hooch — House of Cocktails", "address": "SCO 36, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "Trendy bar and lounge with creative cocktails. Live band performances on select evenings make it a great choice for a night out.", "cuisine": "Cocktail Bar + Pub Food", "vegNV": "Both", "rating": 4.5, "hours": "12 PM–1 AM", "specialties": ["Craft Cocktails", "Live Band evenings", "Starters"], "phone": "+91 98720 75114", "cost": "₹800–1500", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1585937421612-70a008356fbe", "area": "Ranjit Avenue"}, {"id": 77, "name": "Mabels", "address": "SCO-119, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "Fine dining restaurant and bar with a pleasant ambience. Service quality can vary but dal makhani and North Indian mains are generally well-prepared.", "cuisine": "Fine Dining / Bar", "vegNV": "Both", "rating": 4.0, "hours": "10 AM–11:30 PM", "specialties": ["Dal Makhani", "North Indian mains", "Bar selection"], "phone": "N/A", "cost": "₹700–1200", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Ranjit Avenue"}, {"id": 78, "name": "Nectar (HK Clarks Inn Rooftop)", "address": "14, Top Floor, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block / HK Clarks Inn", "description": "Rooftop bar and restaurant atop HK Clarks Inn with a small pool for private events. Thick Strawberry Mocktail and panoramic view are top draws.", "cuisine": "Rooftop Lounge + Bar", "vegNV": "Both", "rating": 3.8, "hours": "11 AM–12:30 AM", "specialties": ["Rooftop pool setting", "Strawberry Mocktail", "Cocktails"], "phone": "+91 88179 00009", "cost": "₹700–1200", "parking": "Hotel parking", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1606491956689-2ea866880c84", "area": "Ranjit Avenue"}, {"id": 79, "name": "Amritsari Haveli Ranjit Avenue", "address": "SCO 27, near Sure Stay Hotel, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block / Sure Stay Hotel", "description": "Heritage-themed kulcha and Punjabi restaurant in Ranjit Avenue. The Record Kulcha plate with unlimited chole and lassi is a crowd-pleaser.", "cuisine": "Punjabi Veg / Kulcha", "vegNV": "Pure Veg", "rating": 4.3, "hours": "11 AM–11:30 PM", "specialties": ["Record Kulcha plate", "Amritsari Kulcha", "Punjabi Thali"], "phone": "+91 84000 83848", "cost": "₹300–500", "parking": "Yes (street)", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Mid-range", "photo": "photo-1574484284002-952d92456975", "area": "Ranjit Avenue"}, {"id": 80, "name": "Sakhis — Cafe and All Day Dining", "address": "SCF No.6, C Block Market, C-Block, Ranjit Avenue 📍 Ranjit Avenue C-Block Market", "description": "One of C-Block's best loved restaurants — warm family atmosphere, authentic butter chicken, excellent brownie and a wide multi-cuisine menu.", "cuisine": "Multi-cuisine All-day Dining", "vegNV": "Both", "rating": 4.8, "hours": "11:30 AM–11:30 PM", "specialties": ["Butter Chicken", "Stuffed Keema Naan", "Brownie"], "phone": "+91 73473 09098", "cost": "₹500–900", "parking": "Yes (street)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Ranjit Avenue"}, {"id": 81, "name": "MuscleHolics Healthy Food Cafe", "address": "SCO 44C, C-Block, Ranjit Avenue 📍 Ranjit Avenue C-Block", "description": "Amritsar's only dedicated health-food cafe. High-protein sandwiches, omelettes, protein shakes, smoothies and boiled chicken — a gym community staple.", "cuisine": "Healthy / High-Protein Cafe", "vegNV": "Both", "rating": 4.3, "hours": "8:30 AM–10:30 PM", "specialties": ["Spanish Omelette", "Protein Shakes", "Grilled Chicken"], "phone": "+91 73472 00025", "cost": "₹300–600", "parking": "Yes (street)", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1546833999-b9f581a1996d", "area": "Ranjit Avenue"}, {"id": 82, "name": "RITARDO Cafe & Fine Dine", "address": "D-Block Building, near Starbucks, Ranjit Avenue 📍 Ranjit Avenue D-Block / near Starbucks", "description": "Lovely fine-dining cafe adjacent to Starbucks. Elegant ambience perfect for family-style dining or catching up with a friend over coffee.", "cuisine": "Cafe / Fine Dine", "vegNV": "Both", "rating": 4.4, "hours": "9 AM–11 PM", "specialties": ["Coffee", "Pasta", "Starters"], "phone": "+91 84273 00417", "cost": "₹600–1000", "parking": "Yes (street)", "type": "Cafe", "spiceLevel": "Mild", "budgetLevel": "Premium", "photo": "photo-1551218808-94e220e084d2", "area": "Ranjit Avenue"}, {"id": 83, "name": "Ecru Cafe & Lounge", "address": "6th Floor, SCO 38-39, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "Aesthetically designed rooftop-style cafe with bar in the middle. Good peri peri fries and pizza, and one of the best coffees in the district.", "cuisine": "Cafe / Lounge + Bar", "vegNV": "Both", "rating": 4.6, "hours": "12 PM–11 PM", "specialties": ["Coffee", "Peri Peri Fries", "Pizza"], "phone": "+91 76960 01986", "cost": "₹700–1200", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565299507177-b0ac66763828", "area": "Ranjit Avenue"}, {"id": 84, "name": "Aurah All Day Dining", "address": "Nagpal Towers, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "A spacious all-day dining restaurant and bar with beautiful interiors. BBQ Chicken Pizza and Crispy Chicken Basil Leaves are must-tries.", "cuisine": "Multi-cuisine + Bar", "vegNV": "Both", "rating": 4.0, "hours": "11:30 AM–11:30 PM", "specialties": ["BBQ Chicken Pizza", "Tandoori Non-Veg Platter", "Pasta"], "phone": "+91 88728 86688", "cost": "₹700–1200", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1559847844-5315695dadae", "area": "Ranjit Avenue"}, {"id": 85, "name": "Housewood Villas", "address": "24, Maqbool Rd, Shastri Nagar, Ranjit Avenue 📍 Maqbool Road / Shastri Nagar, near Ranjit Ave", "description": "A premium garden and bar restaurant near Ranjit Avenue. Beautiful atmosphere and consistent multi-cuisine food. A family favourite for special dinners.", "cuisine": "Multi-cuisine + Bar", "vegNV": "Both", "rating": 4.5, "hours": "1 PM–11:30 PM", "specialties": ["Multi-cuisine mains", "Cocktails", "Rooftop & Garden seating"], "phone": "+91 86999 99666", "cost": "₹900–1600", "parking": "Yes (lot)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555396273-367ea4eb4db5", "area": "Ranjit Avenue"}, {"id": 86, "name": "Barbeque Nation (Nexus Mall)", "address": "Unit 36-37, 2nd Floor, Nexus Mall, Rajinder Nagar 📍 Nexus Amritsar Mall", "description": "Amritsar's most popular buffet chain — live grill-on-table with unlimited starters. Exceptional for large family gatherings.", "cuisine": "BBQ Buffet (veg+non-veg)", "vegNV": "Both", "rating": 4.8, "hours": "12–3:45 PM, 6:30–10:45 PM", "specialties": ["Live Grill Buffet", "Dum Murgh", "Veg Biryani"], "phone": "+91 80 6902 8702", "cost": "₹1000–1500/person", "parking": "Yes (mall)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1414235077428-338989a2e8c0", "area": "Other Areas"}, {"id": 87, "name": "Around The Clock", "address": "B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "A 24/7 convenience store and food outlet — one of the rare late-night food options in the entire city. Good for quick bites at midnight.", "cuisine": "24-hour Cafe / Fast Food", "vegNV": "Both", "rating": 4.5, "hours": "Open 24 hours", "specialties": ["Chilli Chicken", "Pizza", "Pasta"], "phone": "+91 78374 17721", "cost": "₹300–600", "parking": "Yes (street)", "type": "Cafe", "spiceLevel": "Spicy", "budgetLevel": "Mid-range", "photo": "photo-1504674900247-0877df9cc836", "area": "Ranjit Avenue"}, {"id": 88, "name": "RDX Lounge", "address": "SCO 123/124, B-Block, Ranjit Avenue 📍 Ranjit Avenue B-Block", "description": "Spacious bar and lounge in B-Block with live music on request. Good for parties and kitty functions. Comfortable seating, decent food.", "cuisine": "Bar / Lounge", "vegNV": "Both", "rating": 3.9, "hours": "11 AM–11 PM", "specialties": ["Bar", "Live Music events", "Starters"], "phone": "N/A", "cost": "₹700–1200", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565958011703-44f9829ba187", "area": "Ranjit Avenue"}, {"id": 89, "name": "Makhan Fish & Chicken Corner", "address": "Makhan Chowk, 21A, Majitha Rd, near Madaan Hospital 📍 Makhan Chowk, Majitha Road", "description": "Non-veg legend since 1962. Tandoori Chicken is light brown, juicy and smoky — not artificially coloured. Amritsari Fish Tikka celebrated.", "cuisine": "Punjabi Non-Veg (since 1962)", "vegNV": "Non-Veg", "rating": 4.0, "hours": "11 AM–11 PM", "specialties": ["Tandoori Chicken", "Amritsari Fish", "Mutton Champ"], "phone": "+91 98151 93241", "cost": "₹800–1500", "parking": "Yes (restaurant lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555939594-58d7cb561ad1", "area": "Majitha Road"}, {"id": 90, "name": "The Brothers Restaurant", "address": "Majitha Road, Circular Rd, Medical Enclave 📍 Medical Enclave / Majitha Road", "description": "Spacious, family-friendly restaurant on Majitha Road. King-size Amritsari Kulcha with chole and all Punjabi classics. Warm hospitality.", "cuisine": "Punjabi Veg + Kulcha", "vegNV": "Pure Veg", "rating": 4.1, "hours": "9 AM–10 PM", "specialties": ["King-size Amritsari Kulcha", "Lassi", "Dal Makhani"], "phone": "+91 70098 03922", "cost": "₹300–500", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Mid-range", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Majitha Road"}, {"id": 91, "name": "It's Cafe", "address": "Majitha Road, 27 Feet Rd, Green Field, Hargobind Avenue 📍 Majitha Road / Hargobind Avenue", "description": "Popular neighbourhood pizza cafe on Majitha Road with surprisingly good extra-cheese pizza. Chicken Wings are crispy and juicy.", "cuisine": "Pizza Cafe / Italian", "vegNV": "Both", "rating": 4.7, "hours": "10 AM–11:30 PM", "specialties": ["Extra Cheese Pizza", "Chicken Pizza", "Chicken Wings"], "phone": "+91 98148 27870", "cost": "₹300–600", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1585937421612-70a008356fbe", "area": "Majitha Road"}, {"id": 92, "name": "Nimo Club Amritsar", "address": "2599 Majitha Rd, near Bank of India, Sehaj Avenue 📍 Majitha Road / Bank of India", "description": "One of Amritsar's premier nightlife venues — well-managed club with great music, screens and the best crowd. More affordable than most clubs.", "cuisine": "Nightclub + Restaurant + Bar", "vegNV": "Both", "rating": 4.5, "hours": "11 AM–3 AM (Fri-Sat)", "specialties": ["Cocktails", "Club atmosphere", "Live DJ"], "phone": "+91 85589 82987", "cost": "₹1000–2000", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Majitha Road"}, {"id": 93, "name": "Stone Crest Resort Restaurant", "address": "285, Majitha Rd, near Akal Dharam Kanda, Pandori Waraich 📍 Majitha Road / Akal Dharam Kanda", "description": "Resort restaurant on Majitha Road with a swimming pool, well-groomed grounds and hearty Punjabi cooking. Popular for family outings.", "cuisine": "North Indian Resort Dining", "vegNV": "Both", "rating": 4.7, "hours": "9 AM–10 PM", "specialties": ["Punjabi mains", "Resort pool experience", "Family dining"], "phone": "+91 98447 38000", "cost": "₹600–1000", "parking": "Yes (resort)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1606491956689-2ea866880c84", "area": "Majitha Road"}, {"id": 94, "name": "The Bagh Gourmet Garden & Bar", "address": "The Bagh, The Forest Resort, Verka Bypass Rd, Vallah 📍 Verka Bypass / The Forest Resort", "description": "Gorgeous garden restaurant within the lush Forest Resort. Dining here feels like a countryside escape — perfect for romantic dinners.", "cuisine": "Multi-cuisine Garden Restaurant", "vegNV": "Both", "rating": 4.1, "hours": "12:30 PM–1 AM", "specialties": ["Multi-cuisine mains", "Fresh salads", "Cocktails"], "phone": "+91 62803 38925", "cost": "₹800–1500", "parking": "Yes (resort)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1574484284002-952d92456975", "area": "Other Areas"}, {"id": 95, "name": "Elgin Cafe (Lord Elgin)", "address": "Ajnala Road, 2nd left from Livasa Hospital, Airport Rd 📍 Airport Road / near Livasa Hospital", "description": "One of Amritsar's most stunning restaurant settings — colonial conservatory, glass house and lush green garden. Food is good; experience extraordinary.", "cuisine": "European / North Indian Fine Dining", "vegNV": "Both", "rating": 4.4, "hours": "12 PM–11:30 PM", "specialties": ["Continental mains", "Cocktails", "Outdoor garden dining"], "phone": "+91 70879 34000", "cost": "₹1500–2500", "parking": "Yes (large lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Airport Road"}, {"id": 96, "name": "Casa Artesa", "address": "Club Lane, Airport Rd, Palm Grove, Heir 📍 Airport Road / Palm Grove", "description": "A destination restaurant for special occasions — chef trained at Le Cordon Bleu in London. Best Fish Curry in Amritsar; fusion food is intelligent.", "cuisine": "Fusion Indian / Fine Dining", "vegNV": "Both", "rating": 4.3, "hours": "12 PM–12 AM", "specialties": ["Best Fish Curry in Amritsar", "Fusion dishes", "Chef's specials"], "phone": "N/A", "cost": "₹1200–2000", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1546833999-b9f581a1996d", "area": "Airport Road"}, {"id": 97, "name": "Akam Dhaba", "address": "Village Heir, Airport Road 📍 Airport Road / 5 min from ATQ Airport", "description": "24/7 highway dhaba serving travellers for 15 years. Masala chai and Mixed Tandoori Paratha at ₹70 each are highlights. Perfect for odd-hour flights.", "cuisine": "Highway Dhaba (24-hour)", "vegNV": "Both", "rating": 3.6, "hours": "Open 24 hours", "specialties": ["Mixed Tandoori Paratha", "Masala Chai", "Kadai Paneer"], "phone": "+91 98883 37800", "cost": "₹300–600", "parking": "Yes (large lot)", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1551218808-94e220e084d2", "area": "Airport Road"}, {"id": 98, "name": "Tryst — A Tree House Cafe", "address": "Airport Rd, opposite Radisson Blue Hotel, Heir 📍 Airport Road / opposite Radisson Blue", "description": "Unique tree-house-themed cafe and restaurant on the airport road. Attractive outdoor seating, decent food and peaceful atmosphere.", "cuisine": "Multi-cuisine Cafe (Tree-house theme)", "vegNV": "Both", "rating": 4.2, "hours": "12 PM–2 AM", "specialties": ["Multi-cuisine menu", "Outdoor tree-house seating", "Cocktails"], "phone": "N/A", "cost": "₹600–1000", "parking": "Yes (lot)", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565299507177-b0ac66763828", "area": "Airport Road"}, {"id": 99, "name": "Shiso: Modern Asian Kitchen & Bar", "address": "Majitha-Verka Bypass, Shastri Nagar 📍 Majitha-Verka Bypass", "description": "Amritsar's only serious modern Asian dining destination — sushi, prawn curry with Malabar parantha, South Indian-inspired dishes by a Le Cordon Bleu chef.", "cuisine": "Modern Asian / Japanese / Pan-Asian Bar", "vegNV": "Both", "rating": 4.3, "hours": "12:30 PM–12:30 AM", "specialties": ["Sushi", "Prawn Curry Malabar Parantha", "Asian Cocktails"], "phone": "+91 79739 59532", "cost": "₹1200–2000", "parking": "Yes (lot)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1559847844-5315695dadae", "area": "Majitha Road"}, {"id": 100, "name": "The Locals", "address": "Raja Sansi Rd, D R Enclave, Bal Schander, Airport Rd 📍 Airport Road / D R Enclave", "description": "Fine-dining restaurant on the airport road strip with a fresh, contemporary approach. Hummus Platter is considered the best in Amritsar.", "cuisine": "Fine Dining / Mediterranean Fusion", "vegNV": "Both", "rating": 4.5, "hours": "Open 24 hours", "specialties": ["Hummus Platter", "Fresh Veg dishes", "Multi-cuisine mains"], "phone": "N/A", "cost": "₹800–1500", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555396273-367ea4eb4db5", "area": "Airport Road"}, {"id": 101, "name": "Regenta Place Verka (Restaurant)", "address": "74-75, Greenland, Majitha By-Pass, Verka 📍 Majitha Bypass / Verka", "description": "The restaurant at Regenta Place hotel delivers excellently. Breakfast is outstanding; lunch/dinner menus cover a wide range of Indian cuisine.", "cuisine": "Hotel Multi-cuisine", "vegNV": "Both", "rating": 4.3, "hours": "7 AM–11 PM", "specialties": ["Multi-cuisine buffet", "Punjabi mains", "Breakfast spread"], "phone": "+91 62832 89808", "cost": "₹600–1000", "parking": "Yes (hotel lot)", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1414235077428-338989a2e8c0", "area": "Majitha Road"}, {"id": 102, "name": "Amritsari Haveli (Nexus Mall)", "address": "2nd Floor, Food Court, Nexus Mall, Rajinder Nagar 📍 Nexus Amritsar Mall", "description": "Haveli's popular mall outlet serving their signature Veg Maharaja Thali and Non-Veg Thali. Saag Makki Roti and Gur Chai are outstanding.", "cuisine": "Traditional Punjabi", "vegNV": "Both", "rating": 4.5, "hours": "11 AM–11:30 PM", "specialties": ["Maharaja Thali", "Saag Makki Roti", "Non-Veg Thali"], "phone": "+91 91159 11598", "cost": "₹400–700", "parking": "Yes (mall)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1504674900247-0877df9cc836", "area": "Other Areas"}, {"id": 103, "name": "Da Like Italy", "address": "GT Road, Inside Mall of Amritsar, 2nd Floor 📍 Mall of Amritsar / GT Road", "description": "The only authentic wood-fired pizza restaurant inside a mall in Amritsar. Thin-crust pizzas with quality toppings baked in proper wood-fired oven.", "cuisine": "Italian / Pizza", "vegNV": "Both", "rating": 3.9, "hours": "10 AM–11 PM", "specialties": ["Wood-fired Farmhouse Pizza", "Zinger Mint Burger", "Mushroom Soup"], "phone": "+91 62838 80057", "cost": "₹500–900", "parking": "Yes (mall)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565958011703-44f9829ba187", "area": "GT Road"}, {"id": 104, "name": "City Junction Food Point", "address": "GT Road, front of Alpha One Mall, Rajinder Nagar 📍 Alpha One Mall / GT Road", "description": "A convenient, affordable food point opposite Alpha One Mall. Good authentic kulcha and North Indian meals at extremely reasonable prices.", "cuisine": "North Indian / Fast Food", "vegNV": "Both", "rating": 4.0, "hours": "8:30 AM–11:15 PM", "specialties": ["Kulcha", "North Indian meals", "Budget quick bites"], "phone": "+91 94635 40053", "cost": "₹150–300", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1555939594-58d7cb561ad1", "area": "GT Road"}, {"id": 105, "name": "The Eve's Garden", "address": "Grand Trunk Rd, opp. Dental College, Anand Nagar 📍 GT Road / Dental College", "description": "A family restaurant and cafe on GT Road with both indoor and outdoor seating. Veg Cheese Sizzlers and Hara Bara Kebabs are popular.", "cuisine": "Multi-cuisine Family Restaurant", "vegNV": "Both", "rating": 4.1, "hours": "11 AM–12 AM (24hr Fri-Sat)", "specialties": ["Veg Cheese Sizzler", "Hara Bara Kebab", "Paneer Tikka"], "phone": "+91 88377 90199", "cost": "₹400–700", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Spicy", "budgetLevel": "Mid-range", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "GT Road"}, {"id": 106, "name": "The Village Oven", "address": "Ram Tali, Jahaj Ghar 📍 Ram Tali / Jahaj Ghar area", "description": "A pocket-friendly burger and wrap restaurant in a local neighbourhood. Good Crispy Chicken Wraps and pleasant staff.", "cuisine": "Burgers / Wraps / Fast Food", "vegNV": "Both", "rating": 4.4, "hours": "Variable", "specialties": ["Crispy Chicken Wraps", "Veg Mealer Burger", "Mint Mojito"], "phone": "+91 75910 01313", "cost": "₹200–400", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1585937421612-70a008356fbe", "area": "Other Areas"}, {"id": 107, "name": "Pizzetto", "address": "168, Ajit Nagar Rd, near East Mohan Nagar 📍 Ajit Nagar Road", "description": "Highly-rated pizza restaurant in Ajit Nagar with a clean, modern environment. Exotic Chicken Pizza with cheese burst is a bestseller.", "cuisine": "Pizza / Italian", "vegNV": "Both", "rating": 4.7, "hours": "12 PM–10:30 PM", "specialties": ["Exotic Chicken Pizza (cheese burst)", "Creamy Pasta", "Masala Fries"], "phone": "+91 62398 38348", "cost": "₹300–600", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Other Areas"}, {"id": 108, "name": "The Burgeria", "address": "169, Sultanwind Rd, Ajit Nagar 📍 Sultanwind Road / near Kalra Hospital", "description": "Family-friendly burger and pasta restaurant next to Hangries with a fun selfie point. Peri Peri Pasta is the cult favourite.", "cuisine": "Burgers / Italian / Cafe", "vegNV": "Both", "rating": 4.6, "hours": "11 AM–11 PM", "specialties": ["Peri Peri Pasta", "Burgers", "Selfie Zone"], "phone": "+91 85579 30200", "cost": "₹300–600", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1606491956689-2ea866880c84", "area": "Other Areas"}, {"id": 109, "name": "Amritsari Adda", "address": "Opposite Kalra Hospital, Ajit Nagar 📍 Kalra Hospital / Ajit Nagar", "description": "Cosy cafe in Ajit Nagar known for its Paneer Bhurji and Gur Vali Chai. The owner is humble; prices are very economical. Lovely morning spot.", "cuisine": "Punjabi Cafe / Breakfast", "vegNV": "Both", "rating": 4.4, "hours": "8:30 AM–11 PM", "specialties": ["Paneer Bhurji", "Gur Vali Chai", "Budget fast food"], "phone": "+91 95306 04006", "cost": "₹150–300", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1574484284002-952d92456975", "area": "Other Areas"}, {"id": 110, "name": "Majhe Wale Bhau", "address": "Sultanwind Rd, Ajit Nagar 📍 Sultanwind Road / Ajit Nagar", "description": "Neighbourhood cafe with good food quality and fresh ingredients. Popular for their offers on pizzas. Cooperative and friendly staff.", "cuisine": "Pizza / Cafe", "vegNV": "Both", "rating": 4.9, "hours": "9:30 AM–10:30 PM", "specialties": ["Pizza", "Burgers", "Fresh Ingredients"], "phone": "N/A", "cost": "₹200–400", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Other Areas"}, {"id": 111, "name": "Dream Kitchen Indo-Euro Fusion", "address": "Sultanwind Rd, opp. Kalra Hospital, Ajit Nagar 📍 Kalra Hospital / Sultanwind Road", "description": "Small Indo-European fusion eatery with freshly-prepared wraps and rolls. DK Special Roll and Paneer Makhni Wrap are standout dishes.", "cuisine": "Indo-Euro Fusion", "vegNV": "Both", "rating": 4.9, "hours": "9 AM–11 PM", "specialties": ["DK Special Roll", "Paneer Makhni Wrap", "Chicken Wrap"], "phone": "N/A", "cost": "₹150–300", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1546833999-b9f581a1996d", "area": "Other Areas"}, {"id": 112, "name": "El Cocina", "address": "Sultanwind Bypass, near Guru Ramdas Old Age Home 📍 Sultanwind Bypass", "description": "Bar and grill restaurant on the Sultanwind Bypass with a pleasant ambience. Staff are warm and went so far as to offer complimentary drinks.", "cuisine": "Bar & Grill / North Indian", "vegNV": "Both", "rating": 4.3, "hours": "11 AM–11 PM", "specialties": ["Grills", "Pasta", "North Indian mains"], "phone": "+91 6284 558 355", "cost": "₹500–900", "parking": "Yes (lot)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1551218808-94e220e084d2", "area": "Other Areas"}, {"id": 113, "name": "Sardar Food Hub", "address": "Sultanwind Rd, near Gagan Medical Store, Chungi, Azad Nagar 📍 Sultanwind Road / Azad Nagar", "description": "A 5-star rated neighbourhood spot serving Amritsari kulcha and wood-fired pizza. Cozy ambience, quick service and good taste.", "cuisine": "Kulcha + Pizza Hybrid", "vegNV": "Both", "rating": 5.0, "hours": "9 AM–10 PM", "specialties": ["Amritsari Kulcha", "Pizza", "Kulhad items"], "phone": "+91 70099 41475", "cost": "₹150–300", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1565299507177-b0ac66763828", "area": "Other Areas"}, {"id": 114, "name": "Shudh Family Restaurant & Cafe", "address": "Sultanwind Rd, Sudarshan Nagar 📍 Sultanwind Road / Sudarshan Nagar", "description": "A recently opened family cafe with pure veg menu. Great home-style food and a very warm owner. Breakfast facility also available.", "cuisine": "Pure Veg Cafe", "vegNV": "Pure Veg", "rating": 5.0, "hours": "10 AM–11 PM", "specialties": ["Pure Veg home-style meals", "Breakfast", "Family dining"], "phone": "+91 98155 31459", "cost": "₹200–400", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1559847844-5315695dadae", "area": "Other Areas"}, {"id": 115, "name": "Diner by Cakewalk", "address": "SCO 34, Main Market, New Amritsar Colony 📍 New Amritsar Colony Main Market", "description": "An urban-classic diner next to the popular Cakewalk bakery in New Amritsar. Couch seating, excellent dim sum and beautifully prepared dishes.", "cuisine": "Multi-cuisine / Asian / Continental", "vegNV": "Both", "rating": 4.9, "hours": "11 AM–11 PM", "specialties": ["Veg Dimsums", "Cottage Cheese Steak", "Asian mains"], "phone": "+91 98144 40009", "cost": "₹600–1000", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Mild", "budgetLevel": "Premium", "photo": "photo-1555396273-367ea4eb4db5", "area": "Other Areas"}, {"id": 116, "name": "Chai Churi New Amritsar", "address": "SCO-46, Main Market, B Block, New Amritsar Colony 📍 New Amritsar Colony B-Block", "description": "A lively tea-and-pizza cafe in New Amritsar Colony. Amazing teas, cheese stuffed balls and traditional Churi (sweet chapati). Great for students.", "cuisine": "Tea Cafe / Pizza / Snacks", "vegNV": "Both", "rating": 4.3, "hours": "Variable — call ahead", "specialties": ["Chai", "Cheese Stuffed Balls", "Pizza"], "phone": "N/A", "cost": "₹150–300", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1414235077428-338989a2e8c0", "area": "Other Areas"}, {"id": 117, "name": "Majha Malwa Cafe", "address": "Opp. Khalsa College Main Gate, next to Punjab Naatshala, Putligarh 📍 Khalsa College Main Gate, Putligarh", "description": "A beautiful two-floor cafe opposite Khalsa College. Very affordable menu; great for sandwiches and pasta. Popular with students and locals.", "cuisine": "Cafe / Snacks / Sandwiches", "vegNV": "Both", "rating": 4.7, "hours": "10:30 AM–9 PM (closed Sun)", "specialties": ["Variety Sandwiches", "Pasta", "Loaded with fresh veggies"], "phone": "N/A", "cost": "₹150–300", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1504674900247-0877df9cc836", "area": "Putligarh"}, {"id": 118, "name": "The Tasty Delight", "address": "Putligarh Chowk, GT Road, opp. Senior Study School 📍 Putligarh Chowk / GT Road", "description": "A 5-star rated restaurant at Putligarh Chowk with excellent butter chicken, cream chicken and pasta. Great value and welcoming atmosphere.", "cuisine": "North Indian / Multi-cuisine", "vegNV": "Both", "rating": 5.0, "hours": "10:30 AM–11 PM", "specialties": ["Butter Chicken", "Cream Chicken", "Chicken Biryani"], "phone": "+91 82838 03912", "cost": "₹400–700", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1565958011703-44f9829ba187", "area": "GT Road"}, {"id": 119, "name": "One Bite Family Cafe", "address": "GT Road, opp. Khalsa College For Women, Putligarh 📍 Khalsa College for Women, GT Road", "description": "Charming family cafe on GT Road with excellent fresh food. The Masala Fries here are among the best in the city. Fresh, hygienic kitchen.", "cuisine": "Multi-cuisine Family Cafe", "vegNV": "Both", "rating": 4.5, "hours": "9 AM–11 PM", "specialties": ["Masala Fries", "Sandwiches", "Pasta"], "phone": "+91 82644 89019", "cost": "₹200–400", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1555939594-58d7cb561ad1", "area": "GT Road"}, {"id": 120, "name": "Dude Cafe", "address": "Opp. Ganga Building, near Apollo Pharmacy, Guru Arjun Nagar, Putligarh 📍 Putligarh / Guru Arjun Nagar", "description": "A quiet neighbourhood breakfast and lunch cafe in Putligarh. Friendly staff, good Thai dishes and parantha. Reasonable prices.", "cuisine": "Cafe / Punjabi / Thai", "vegNV": "Both", "rating": 4.7, "hours": "8 AM–10 PM", "specialties": ["Thai dishes", "Parantha", "Good Breakfast options"], "phone": "N/A", "cost": "₹200–400", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Putligarh"}, {"id": 121, "name": "Cactus Club", "address": "GT Road, opp. Khalsa College For Women, Putligarh 📍 Khalsa College for Women, GT Road", "description": "A restaurant and small event venue in Putligarh. Popular for family functions and small parties in the Khalsa College area.", "cuisine": "Multi-cuisine / Event Venue", "vegNV": "Both", "rating": 4.0, "hours": "10 AM–11 PM", "specialties": ["Multi-cuisine meals", "Party bookings", "Small events"], "phone": "N/A", "cost": "₹400–700", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1585937421612-70a008356fbe", "area": "GT Road"}, {"id": 122, "name": "Khaira Restaurant & Party Hall", "address": "Near India Gate, Naraingarh, Chheharta, Attari 📍 India Gate Naraingarh, Chheharta", "description": "A well-regarded restaurant and party hall in Chheharta visited by groups from across the city. Their Amritsari Kulcha — arguably the best in the entire Chheharta region.", "cuisine": "Punjabi / Multi-cuisine", "vegNV": "Both", "rating": 4.8, "hours": "10 AM–10:30 PM", "specialties": ["Amritsari Kulcha", "Party Hall bookings", "Dal Makhani"], "phone": "+91 86984 01000", "cost": "₹400–700", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Chheharta"}, {"id": 123, "name": "Swaad Ambarsariya", "address": "Opp. Dana Mandi, Naraingarh, Chheharta 📍 Dana Mandi, Chheharta", "description": "A charming restaurant near Dana Mandi in Chheharta. Serves exceptional kulchas that even dedicated kulcha seekers rave about. Friendly and quick.", "cuisine": "Punjabi / Kulcha", "vegNV": "Pure Veg", "rating": 4.9, "hours": "9 AM–10:30 PM", "specialties": ["Amritsari Kulcha", "North Indian meals", "Lassi"], "phone": "+91 82888 84759", "cost": "₹150–300", "parking": "Street parking", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1606491956689-2ea866880c84", "area": "Chheharta"}, {"id": 124, "name": "Pizza Destination", "address": "Sun Sahib Rd, opp. Gurudwara, Chheharta 📍 Gurudwara Chheharta / Sun Sahib Road", "description": "A perfect-rated neighbourhood pizza and dessert spot in Chheharta. Known for Kulhad Pizza, chocolate shake and ice creams at honest prices.", "cuisine": "Pizza / Italian / Desserts", "vegNV": "Both", "rating": 5.0, "hours": "10 AM–10 PM", "specialties": ["Kulhad Pizza", "Chocolate Shake", "Ice creams"], "phone": "N/A", "cost": "₹200–400", "parking": "Street parking", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Mid-range", "photo": "photo-1574484284002-952d92456975", "area": "Chheharta"}, {"id": 125, "name": "Brothers Dhaba (GT Road Khandwala)", "address": "Grand Trunk Rd, near LIC Building, Khandwala 📍 LIC Building, Khandwala / GT Road", "description": "A well-established dhaba on the GT Road stretch near Chheharta. Acclaimed for authentic Punjabi Thali, Lachha Parathas and Lassi.", "cuisine": "Punjabi Dhaba", "vegNV": "Both", "rating": 4.1, "hours": "9 AM–11 PM", "specialties": ["Punjabi Thali", "Lachha Paratha", "Dal Makhani"], "phone": "+91 98881 48082", "cost": "₹200–400", "parking": "Yes (lot)", "type": "Dhaba", "spiceLevel": "Mild", "budgetLevel": "Mid-range", "photo": "photo-1603894584373-5ac82b2ae398", "area": "GT Road"}, {"id": 126, "name": "Yo Yo Kulcha", "address": "Near OCM, Sandhu Colony, Chheharta 📍 Sandhu Colony / OCM, Chheharta", "description": "A hidden gem in Chheharta that many fans consider better than some famous walled-city kulcha outlets. The chole here are the real deal.", "cuisine": "Kulcha Stall", "vegNV": "Pure Veg", "rating": 4.1, "hours": "9:30 AM–5 PM", "specialties": ["Mix Kulcha", "Aloo Kulcha", "Home-style Chole"], "phone": "+91 75085 25555", "cost": "₹100–200", "parking": "Street parking", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1546833999-b9f581a1996d", "area": "Chheharta"}, {"id": 127, "name": "Hungry Point (Chheharta)", "address": "Sun Sahib Rd, opp. Gurudwara, Chheharta 📍 Gurudwara Chheharta", "description": "A budget-friendly fast food cafe in Chheharta opposite the Gurudwara. Good atmosphere and burgers; fries are well-appreciated.", "cuisine": "Fast Food / Cafe", "vegNV": "Both", "rating": 4.3, "hours": "10 AM–10 PM", "specialties": ["Burgers", "Masala Fries", "Fast food snacks"], "phone": "+91 81466 65807", "cost": "₹150–300", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1551218808-94e220e084d2", "area": "Chheharta"}, {"id": 128, "name": "Mahajan Chicken House", "address": "Batala Rd, opp. P.W.D. Office, near Celebration Mall, Gagan Colony 📍 Celebration Mall / Batala Road", "description": "A destination non-veg restaurant near Celebration Mall. Kalmi Kebab is juicy, aromatically seasoned and absolutely extraordinary. Homely ambience.", "cuisine": "Chicken / Punjabi Non-Veg", "vegNV": "Non-Veg", "rating": 4.8, "hours": "12 PM–11 PM", "specialties": ["Kalmi Kebab", "Malai Tikka Fish", "Garlic Naan"], "phone": "+91 94170 12456", "cost": "₹700–1200", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565299507177-b0ac66763828", "area": "Batala Road"}, {"id": 129, "name": "Kitchen 99", "address": "5, Batala-Amritsar Rd, opp. Axis Bank, near Celebration Mall 📍 Celebration Mall / Batala Road", "description": "A well-run multi-cuisine restaurant near Celebration Mall. The owner personally ensures quality. Paneer Lababdar is exceptional.", "cuisine": "Multi-cuisine (Veg focus)", "vegNV": "Both", "rating": 4.5, "hours": "8 AM–11 PM", "specialties": ["Paneer Lababdar", "Crispy Noodles", "Pure Veg Multi-cuisine"], "phone": "+91 98156 29781", "cost": "₹400–700", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1559847844-5315695dadae", "area": "Batala Road"}, {"id": 130, "name": "The Secret Garden", "address": "Batala Rd, near Pillar 70-71, opp. The Corporate Hospital 📍 Pillar 70-71, Batala Road / Corporate Hospital", "description": "A garden restaurant and event venue on Batala Road. Great food and ambient setting — ideal for family dinners and private gatherings.", "cuisine": "Garden Restaurant / Event Venue", "vegNV": "Both", "rating": 4.0, "hours": "1 PM–10:30 PM", "specialties": ["Multi-cuisine mains", "Garden ambience", "Party bookings"], "phone": "+91 78378 17703", "cost": "₹500–900", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555396273-367ea4eb4db5", "area": "Batala Road"}, {"id": 131, "name": "Skonis Bites", "address": "Pillar 76, Batala Rd, opp. Power House, Khanna Nagar 📍 Pillar 76 / Batala Road", "description": "A highly-rated family restaurant on Batala Road with good food quality and fresh ingredients. Underrated neighbourhood gem.", "cuisine": "Family Restaurant / Multi-cuisine", "vegNV": "Both", "rating": 4.7, "hours": "9 AM–11 PM", "specialties": ["Multi-cuisine family meals", "Fresh ingredients", "Budget bites"], "phone": "N/A", "cost": "₹300–600", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1414235077428-338989a2e8c0", "area": "Batala Road"}, {"id": 132, "name": "Chatkarah Bakery & Restaurant", "address": "Opp. Pillar 20-A, Gali No.4, Main Batala-Amritsar Rd, Vijay Nagar 📍 Batala Road / Vijay Nagar", "description": "Beloved neighbourhood bakery and restaurant offering excellent custom cakes, Singapore Noodles, Subway-style sandwiches and healthy thalis.", "cuisine": "Bakery + Veg Cafe", "vegNV": "Pure Veg", "rating": 4.5, "hours": "11 AM–11 PM", "specialties": ["Custom Cakes", "Singapore Noodles", "Subway sandwich"], "phone": "+91 85560 64249", "cost": "₹300–600", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1504674900247-0877df9cc836", "area": "Batala Road"}, {"id": 133, "name": "The Machhiwala by Makhan Fish Co.", "address": "310-A, Circular Road, Green Avenue 📍 Circular Road / Green Avenue", "description": "Fine-dining non-veg offshoot of the legendary Makhan Fish brand. Excellent tandoor fish, Ajwain Fish Tikka and full bar. Elegant interiors.", "cuisine": "Seafood / Non-Veg Fine Dining", "vegNV": "Non-Veg", "rating": 4.5, "hours": "12 PM–11:30 PM", "specialties": ["Ajwain Fish Tikka", "Haryali Fish", "Tawa Chicken"], "phone": "+91 98009 10011", "cost": "₹1000–1800", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565958011703-44f9829ba187", "area": "Other Areas"}, {"id": 134, "name": "Kazan Farmstay Restaurant", "address": "Green Paradise, 1-4, Airport Rd, Palm Grove, Heir 📍 Airport Road / Palm Grove", "description": "Farm-to-table restaurant inside a resort that hosts weddings and events. Open for dining when not reserved for events. Spacious grounds.", "cuisine": "Farm-style Multi-cuisine", "vegNV": "Both", "rating": 4.2, "hours": "Variable (call ahead)", "specialties": ["Fresh farm produce", "North Indian & Continental", "Event dining"], "phone": "+91 77101 00912", "cost": "₹800–1400", "parking": "Yes (large resort)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555939594-58d7cb561ad1", "area": "Airport Road"}, {"id": 135, "name": "Da Food Plant & Restaurant", "address": "5, Majitha Rd, Prakash Nagar 📍 Majitha Road / Prakash Nagar", "description": "Tiny but exceptional couple-run eatery on Majitha Road. Momos, burger and pizza made fresh to order, all customisable. Delightful surprise.", "cuisine": "Fusion Fast Food / Pizza", "vegNV": "Both", "rating": 5.0, "hours": "12 PM–11 AM", "specialties": ["Momos Kurkure", "Custom Pizza", "Burger"], "phone": "+91 99886 95499", "cost": "₹200–400", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Majitha Road"}, {"id": 136, "name": "Rajasthani Chaat Bhandar", "address": "Katra Ahluwalia (near Bazar Bikaneria) 📍 Golden Temple lanes / Katra Ahluwalia", "description": "One of the oldest Rajasthani chaat stalls in the walled city. Stand-and-eat on the street — golgappa, dahi puri and dahi bhalla are outstanding.", "cuisine": "Street Chaat Stall", "vegNV": "Pure Veg", "rating": 4.2, "hours": "4:30 PM–9:30 PM", "specialties": ["Gol Gappa", "Dahi Puri", "Dahi Bhalla"], "phone": "+91 84275 49003", "cost": "₹50–150", "parking": "No", "type": "Street Food", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1585937421612-70a008356fbe", "area": "Golden Temple Area"}, {"id": 137, "name": "Kitchen 1574", "address": "360, Mall Road, Green Avenue 📍 Mall Road / Green Avenue", "description": "A quality hotel restaurant on Mall Road delivering superb Indian cuisine. An international traveller's favourite — consistently impressive food.", "cuisine": "North Indian / Multi-cuisine Hotel", "vegNV": "Both", "rating": 5.0, "hours": "7 AM–11:30 PM", "specialties": ["Quality Indian mains", "Hotel dining experience", "Continental"], "phone": "N/A", "cost": "₹700–1200", "parking": "Hotel parking", "type": "Casual", "spiceLevel": "Spicy", "budgetLevel": "Premium", "photo": "photo-1567188040759-fb8a883dc6d8", "area": "Other Areas"}, {"id": 138, "name": "The Tasty Delight (Putligarh)", "address": "Putligarh Chowk, GT Road 📍 Putligarh Chowk", "description": "Exceptional non-veg restaurant at Putligarh Chowk with chicken biryani and cream chicken that visitors consistently rave about.", "cuisine": "North Indian Non-Veg", "vegNV": "Both", "rating": 5.0, "hours": "10:30 AM–11 PM", "specialties": ["Chicken Biryani", "Cream Chicken", "Butter Chicken"], "phone": "+91 82838 03912", "cost": "₹400–700", "parking": "Street parking", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1606491956689-2ea866880c84", "area": "GT Road"}, {"id": 139, "name": "Amritsari adda (Ajit Nagar)", "address": "Opp. Kalra Hospital, Ajit Nagar 📍 Kalra Hospital / Sultanwind Road", "description": "A neighbourhood cafe visited even by NRIs from Canada who specifically seek it out. Excellent Paneer Bhurji, fast food and great outdoor vibe.", "cuisine": "Punjabi Cafe / Fast Food", "vegNV": "Both", "rating": 4.4, "hours": "8:30 AM–11 PM", "specialties": ["Paneer Bhurji", "Sandwiches", "Gur Vali Chai"], "phone": "+91 95306 04006", "cost": "₹150–300", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1574484284002-952d92456975", "area": "Other Areas"}, {"id": 140, "name": "Gian di Lassi (Second Stall)", "address": "Golden Temple Outer Rd, opp. Regent Cinema, Katra Sher Singh 📍 Regent Cinema Chowk", "description": "The sister stall to Gian di Lassi — often with a shorter queue. Equally authentic peda lassi served in big brass glasses in British-era tradition.", "cuisine": "Lassi Shop (British-era)", "vegNV": "Pure Veg", "rating": 4.3, "hours": "6 AM–8 PM", "specialties": ["Peda Lassi", "Sweet Lassi in brass glasses"], "phone": "N/A", "cost": "₹65–120", "parking": "No", "type": "Street Food", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1603894584373-5ac82b2ae398", "area": "Golden Temple Area"}, {"id": 141, "name": "Baba Chicken (C Block, Since 1964)", "address": "C Block, Ranjit Avenue 📍 Ranjit Avenue C-Block", "description": "A legacy outlet of the famous Baba Chicken brand since 1964. Carries forward the same classic Punjabi non-veg tradition in the C-Block market.", "cuisine": "Punjabi Non-Veg", "vegNV": "Non-Veg", "rating": 5.0, "hours": "12 AM–11:30 PM", "specialties": ["Classic Baba Chicken dishes", "Butter Chicken", "Tandoori"], "phone": "+91 78500 20005", "cost": "₹500–900", "parking": "Yes (street)", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Premium", "photo": "photo-1546833999-b9f581a1996d", "area": "Ranjit Avenue"}, {"id": 142, "name": "Foodeez (Ranjit Avenue branch)", "address": "Ranjit Avenue area 📍 Ranjit Avenue", "description": "Multi-cuisine family dining with a known reputation in Amritsar for quality Indian food. A reliable dining-out choice in the Ranjit Avenue orbit.", "cuisine": "Multi-cuisine Family Dining", "vegNV": "Both", "rating": 4.2, "hours": "11 AM–11 PM", "specialties": ["North Indian Mains", "Family Thali", "Continental options"], "phone": "N/A", "cost": "₹500–900", "parking": "Yes (street)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1551218808-94e220e084d2", "area": "Ranjit Avenue"}, {"id": 143, "name": "Lucky Vaishno Dhaba", "address": "Main Chheharta, Dharampura, Chheharta 📍 Chheharta Main Market", "description": "A reliable pure-veg dhaba in the heart of Chheharta's main market. Vegetable meals and North Indian staples at genuine dhaba prices.", "cuisine": "Pure Veg Dhaba", "vegNV": "Pure Veg", "rating": 4.0, "hours": "10 AM–9 PM", "specialties": ["Dal", "Sabzi", "Roti"], "phone": "N/A", "cost": "₹100–200", "parking": "Street parking", "type": "Dhaba", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1565299507177-b0ac66763828", "area": "Chheharta"}, {"id": 144, "name": "Nimo Club (Majitha Rd)", "address": "2599, Majitha Rd, near Bank of India, Sehaj Avenue 📍 Bank of India / Majitha Road", "description": "Popular club in Amritsar running till 3 AM on weekends. Music, crowd and food are all highlights. Cocktails are reasonably priced.", "cuisine": "Nightclub + Bar + Restaurant", "vegNV": "Both", "rating": 4.5, "hours": "11 AM–3 AM (Fri/Sat)", "specialties": ["Club night", "Cocktails", "Punjabi starters"], "phone": "+91 85589 82987", "cost": "₹1000–2000", "parking": "Yes (lot)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1559847844-5315695dadae", "area": "Majitha Road"}, {"id": 145, "name": "Aqua Lounge (Holiday Inn Pool Bar)", "address": "Holiday Inn, B-Block, Ranjit Avenue 📍 Holiday Inn Ranjit Avenue", "description": "The pool bar at Holiday Inn Amritsar — an exclusive weekend experience. Open Fri-Sun only; ideal for a relaxed evening by the pool.", "cuisine": "Pool Bar / Cocktails / Light Bites", "vegNV": "Both", "rating": 5.0, "hours": "Fri–Sun: 7 PM–11 PM", "specialties": ["Cocktails", "Pool-side ambience", "Light bites"], "phone": "+91 85588 09112", "cost": "₹1000–2000", "parking": "Yes (hotel)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1555396273-367ea4eb4db5", "area": "Ranjit Avenue"}, {"id": 146, "name": "Punjabi Cuisine (GT Road Naraingarh)", "address": "Near Taj Palace, GT Road, Naraingarh, Chheharta 📍 GT Road / near Taj Palace, Naraingarh", "description": "A highly-rated neighbourhood restaurant on the GT Road bypass near Naraingarh. Well-reviewed for its flavourful dishes and attentive staff.", "cuisine": "Punjabi Cuisine", "vegNV": "Both", "rating": 5.0, "hours": "Variable — call ahead", "specialties": ["Signature dishes", "Fresh Punjabi mains", "Family dining"], "phone": "N/A", "cost": "₹300–600", "parking": "Yes (lot)", "type": "Casual", "spiceLevel": "Medium", "budgetLevel": "Mid-range", "photo": "photo-1414235077428-338989a2e8c0", "area": "GT Road"}, {"id": 147, "name": "Housewood Villas Bar", "address": "24, Maqbool Rd, Shastri Nagar, Ranjit Avenue 📍 Maqbool Road / Shastri Nagar", "description": "Premium bar and dining space near Ranjit Avenue. Cozy indoor seating; the pizza is on a cracker base but the cocktails and atmosphere are strong draws.", "cuisine": "Premium Bar + Multi-cuisine", "vegNV": "Both", "rating": 4.5, "hours": "1 PM–11:30 PM", "specialties": ["Cocktails", "Bar selection", "Multi-cuisine dinner"], "phone": "+91 86999 99666", "cost": "₹1000–1800", "parking": "Yes (lot)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1504674900247-0877df9cc836", "area": "Ranjit Avenue"}, {"id": 148, "name": "Ecru Cafe (D-Block)", "address": "6th Floor, SCO 38-39, D-Block, Ranjit Avenue 📍 Ranjit Avenue D-Block", "description": "A sleek, well-curated sixth-floor cafe and lounge with one of the best coffees in the district. Peri Peri Fries are addictive.", "cuisine": "Cafe / Lounge", "vegNV": "Both", "rating": 4.6, "hours": "12 PM–11 PM", "specialties": ["Coffee", "Peri Peri Fries", "Primavera Pizza"], "phone": "+91 76960 01986", "cost": "₹700–1200", "parking": "Yes (street)", "type": "Fine Dining", "spiceLevel": "Medium", "budgetLevel": "Premium", "photo": "photo-1565958011703-44f9829ba187", "area": "Ranjit Avenue"}, {"id": 149, "name": "Majha Malwa Cafe (Putligarh)", "address": "Opp. Khalsa College, near Punjab Naatshala, Putligarh 📍 Khalsa College Main Gate, Putligarh", "description": "Affordable and charming two-floor cafe opposite Khalsa College. Well-received for sandwiches, pasta loaded with fresh veggies.", "cuisine": "Cafe / Snacks", "vegNV": "Both", "rating": 4.7, "hours": "10:30 AM–9 PM (closed Sun)", "specialties": ["Sandwiches", "Pasta", "Budget bites"], "phone": "N/A", "cost": "₹150–300", "parking": "Street parking", "type": "Cafe", "spiceLevel": "Medium", "budgetLevel": "Budget", "photo": "photo-1555939594-58d7cb561ad1", "area": "Putligarh"}, {"id": 150, "name": "Swaad Ambarsariya (Chheharta)", "address": "Opp. Dana Mandi, Naraingarh, Chheharta 📍 Dana Mandi, Chheharta", "description": "A standout kulcha restaurant in Chheharta praised even by diehard kulcha enthusiasts. Friendly service and a no-frills but great meal.", "cuisine": "Punjabi / Kulcha", "vegNV": "Pure Veg", "rating": 4.9, "hours": "9 AM–10:30 PM", "specialties": ["Amritsari Kulcha", "North Indian meals", "Lassi"], "phone": "+91 82888 84759", "cost": "₹150–300", "parking": "Street parking", "type": "Casual", "spiceLevel": "Mild", "budgetLevel": "Budget", "photo": "photo-1516714435131-44d6b64dc6a2", "area": "Chheharta"}];
+
+// ─── STATE ───
+const prefs = {
+  vegPref: null,
+  spice: 2,
+  budget: 400,
+  budgetLabel: 'Mid-range',
+  area: null,
+  restType: null,
+  cuisines: [],
+  mealTime: null,
+};
+
+let currentUser = null;
+let currentQuestion = 1;
+let totalQuestions = 7;
+
+// ─── AUTH ───
+function switchAuthTab(tab) {
+  document.querySelectorAll('.tab-toggle button').forEach((b,i) => b.classList.toggle('active', (tab==='login'&&i===0)||(tab==='signup'&&i===1)));
+  document.getElementById('login-form').style.display = tab==='login'?'':'none';
+  document.getElementById('signup-form').style.display = tab==='signup'?'':'none';
+}
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  if (!u) { alert('Please enter a username'); return; }
+  currentUser = u;
+  startQuiz();
+}
+function doSignup() {
+  const n = document.getElementById('signup-name').value.trim();
+  const u = document.getElementById('signup-user').value.trim();
+  if (!n||!u) { alert('Please fill all fields'); return; }
+  currentUser = u;
+  startQuiz();
+}
+function doGuest() {
+  currentUser = 'Guest';
+  startQuiz();
+}
+
+function startQuiz() {
+  document.getElementById('user-badge').textContent = currentUser.charAt(0).toUpperCase();
+  document.getElementById('user-badge').title = currentUser;
+  showScreen('quiz-screen');
+  goToQuestion(1);
+}
+
+// ─── QUIZ ───
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.display = '';
+}
+
+function goToQuestion(n) {
+  currentQuestion = n;
+  document.querySelectorAll('.quiz-question').forEach(q => q.classList.remove('active'));
+  const qEl = document.querySelector(`.quiz-question[data-q="${n}"]`);
+  if (qEl) qEl.classList.add('active');
+  const pct = Math.round((n / totalQuestions) * 100);
+  document.getElementById('quiz-prog').style.width = pct + '%';
+  document.getElementById('quiz-step-label').textContent = n + ' / ' + totalQuestions;
+}
+
+function nextQuestion(n) {
+  goToQuestion(n);
+}
+
+function selectOption(el, key, val) {
+  // single select within question
+  const container = el.closest('.quiz-question');
+  container.querySelectorAll('.option-card:not(.multi)').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  prefs[key] = val;
+  // Enable next button
+  const nextBtn = container.querySelector('.btn-next');
+  if (nextBtn) nextBtn.disabled = false;
+}
+
+function toggleMulti(el, key, val) {
+  el.classList.toggle('selected');
+  if (!prefs[key]) prefs[key] = [];
+  if (el.classList.contains('selected')) {
+    if (!prefs[key].includes(val)) prefs[key].push(val);
+  } else {
+    prefs[key] = prefs[key].filter(v => v !== val);
+  }
+}
+
+const spiceLabels = ['🥛 No Spice','🌿 Mild','🌶️ Medium','🔥 Hot','🔥🔥 Extra Hot'];
+function updateSpice(v) {
+  prefs.spice = parseInt(v);
+  document.getElementById('spice-val').textContent = spiceLabels[v];
+  document.getElementById('spice-thumb').style.left = (v / 4 * 100) + '%';
+}
+
+function updateBudget(v) {
+  prefs.budget = parseInt(v);
+  document.getElementById('budget-val').textContent = v;
+  if (v < 200) prefs.budgetLabel = 'Budget';
+  else if (v < 700) prefs.budgetLabel = 'Mid-range';
+  else prefs.budgetLabel = 'Premium';
+  // Update slider gradient
+  const pct = ((v - 100) / 1900) * 100;
+  document.getElementById('budget-slider').style.background = `linear-gradient(90deg, var(--saffron) ${pct}%, var(--border) ${pct}%)`;
+}
+
+function setBudgetPreset(val, label) {
+  prefs.budget = val;
+  prefs.budgetLabel = label;
+  document.getElementById('budget-slider').value = val;
+  document.getElementById('budget-val').textContent = val;
+  const pct = ((val - 100) / 1900) * 100;
+  document.getElementById('budget-slider').style.background = `linear-gradient(90deg, var(--saffron) ${pct}%, var(--border) ${pct}%)`;
+  document.querySelectorAll('.quiz-question[data-q="3"] .option-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+// ─── SCORING ENGINE ───
+function scoreRestaurant(r) {
+  let score = 0;
+  // Veg match (high weight)
+  if (prefs.vegPref === 'Pure Veg' || prefs.vegPref === 'Jain' || prefs.vegPref === 'No Onion No Garlic') {
+    if (r.vegNV === 'Pure Veg') score += 40;
+    else if (r.vegNV === 'Both') score += 20;
+    else score -= 50;
+  } else if (prefs.vegPref === 'Non-Veg') {
+    if (r.vegNV === 'Non-Veg') score += 30;
+    else if (r.vegNV === 'Both') score += 25;
+    else score += 10;
+  }
+  // Budget match
+  if (r.budgetLevel === prefs.budgetLabel) score += 30;
+  else if (
+    (prefs.budgetLabel === 'Mid-range' && r.budgetLevel === 'Budget') ||
+    (prefs.budgetLabel === 'Premium' && r.budgetLevel === 'Mid-range')
+  ) score += 15;
+  // Type match
+  if (prefs.restType && prefs.restType !== 'Any') {
+    if (r.type === prefs.restType) score += 25;
+    else score -= 5;
+  } else score += 10;
+  // Area match
+  if (prefs.area && prefs.area !== 'Any') {
+    if (r.area === prefs.area) score += 20;
+    else score += 5;
+  } else score += 10;
+  // Spice match
+  const spiceMap = { 0:'Mild',1:'Mild',2:'Medium',3:'Spicy',4:'Spicy' };
+  const wantedSpice = spiceMap[prefs.spice];
+  if (r.spiceLevel === wantedSpice) score += 15;
+  // Cuisine match
+  if (prefs.cuisines && prefs.cuisines.length > 0 && !prefs.cuisines.includes('Any')) {
+    const cuisineLower = r.cuisine.toLowerCase();
+    const match = prefs.cuisines.some(c => cuisineLower.includes(c.toLowerCase()));
+    if (match) score += 20;
+  } else score += 10;
+  // Rating bonus
+  score += (r.rating - 3.5) * 8;
+  return score;
+}
+
+// ─── SHOW RESULTS ───
+function showResults() {
+  // Score all restaurants
+  const scored = RESTAURANTS.map(r => ({ ...r, score: scoreRestaurant(r) }))
+    .sort((a,b) => b.score - a.score);
+
+  showScreen('results-screen');
+
+  // Update hero
+  const vegLabel = prefs.vegPref || 'All';
+  const typeLabel = prefs.restType && prefs.restType !== 'Any' ? prefs.restType : 'All venues';
+  const areaLabel = prefs.area && prefs.area !== 'Any' ? prefs.area : 'All Amritsar';
+
+  document.getElementById('reco-subtitle').textContent = `Personalized for ${currentUser} · ${areaLabel}`;
+
+  const tagsEl = document.getElementById('reco-tags');
+  tagsEl.innerHTML = `
+    <span class="results-tag veg">🌿 ${vegLabel}</span>
+    <span class="results-tag spice">🌶️ ${spiceLabels[prefs.spice]}</span>
+    <span class="results-tag budget">₹${prefs.budget} budget</span>
+    <span class="results-tag type">${typeLabel}</span>
+    <span class="results-tag type">📍 ${areaLabel}</span>
+  `;
+
+  const qualified = scored.filter(r => r.score > 0);
+  document.getElementById('reco-count').innerHTML = `<strong>${qualified.length}</strong> restaurants matched your profile`;
+
+  // Top picks (featured + grid)
+  const top = scored.slice(0, 7);
+  const topGrid = document.getElementById('top-picks-grid');
+  topGrid.innerHTML = '';
+
+  // First card is featured
+  if (top[0]) topGrid.appendChild(makeCard(top[0], true, true));
+  top.slice(1, 4).forEach(r => topGrid.appendChild(makeCard(r, false, true)));
+
+  // More picks
+  const moreGrid = document.getElementById('more-picks-grid');
+  moreGrid.innerHTML = '';
+  scored.slice(7, 19).forEach(r => moreGrid.appendChild(makeCard(r, false, false)));
+
+  // Init explore
+  renderExplore(RESTAURANTS);
+}
+
+// ─── CARD BUILDER ───
+function makeCard(r, featured=false, showMatch=false) {
+  const div = document.createElement('div');
+  div.className = featured ? 'restaurant-card featured-card' : 'restaurant-card';
+  div.onclick = () => openModal(r);
+
+  const vegClass = r.vegNV === 'Pure Veg' ? 'veg' : r.vegNV === 'Non-Veg' ? 'nonveg' : 'both';
+  const vegEmoji = r.vegNV === 'Pure Veg' ? '🟢' : r.vegNV === 'Non-Veg' ? '🔴' : '🟡';
+  const matchPct = Math.min(99, Math.max(60, Math.round(50 + r.score * 0.8)));
+  const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.address + ' Amritsar')}`;
+  const imgUrl = `https://images.unsplash.com/${r.photo}?auto=format&fit=crop&w=600&q=75`;
+
+  const imgHtml = `<div class="card-img"><img src="${imgUrl}" alt="${r.name}" loading="lazy" onerror="this.parentElement.innerHTML='🍛'"/></div>`;
+
+  const specHtml = r.specialties.slice(0,2).map(s => `<span class="spec-chip">${s}</span>`).join('');
+
+  div.innerHTML = `
+    ${showMatch ? `<div class="match-badge">${matchPct}% match</div>` : ''}
+    ${imgHtml}
+    <div class="card-body">
+      <div class="card-top">
+        <div class="card-name">${r.name}</div>
+        <div class="card-rating">⭐ ${r.rating}</div>
+      </div>
+      <div class="card-cuisine">${r.cuisine} · ${r.area}</div>
+      <div class="card-desc">${r.description}</div>
+      <div class="card-pills">
+        <span class="pill ${vegClass}">${vegEmoji} ${r.vegNV}</span>
+        <span class="pill type">${r.type}</span>
+        <span class="pill budget">${r.budgetLevel}</span>
+      </div>
+      <div class="spec-chips" style="margin-bottom:10px">${specHtml}</div>
+      <div class="card-footer">
+        <div>
+          <div class="card-cost">${r.cost}</div>
+          <div class="card-hours">⏰ ${r.hours}</div>
+        </div>
+        <a class="card-map-btn" href="${mapsUrl}" target="_blank" onclick="event.stopPropagation()">📍 Maps</a>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+// ─── EXPLORE ───
+function renderExplore(list) {
+  const grid = document.getElementById('explore-grid');
+  grid.innerHTML = '';
+  if (!list.length) {
+    grid.innerHTML = '<div class="no-results" style="grid-column:1/-1"><div class="icon">🔍</div><h3>No restaurants found</h3><p>Try adjusting your filters</p></div>';
+    return;
+  }
+  list.forEach(r => grid.appendChild(makeCard(r, false, false)));
+  document.getElementById('explore-summary').innerHTML = `Showing <strong>${list.length}</strong> of 150 restaurants in Amritsar`;
+}
+
+function applyExploreFilters() {
+  const search = document.getElementById('explore-search').value.toLowerCase();
+  const veg = document.getElementById('f-veg').value;
+  const type = document.getElementById('f-type').value;
+  const budget = document.getElementById('f-budget').value;
+  const area = document.getElementById('f-area').value;
+  const sort = document.getElementById('f-sort').value;
+
+  let filtered = RESTAURANTS.filter(r => {
+    if (veg && r.vegNV !== veg) return false;
+    if (type && r.type !== type) return false;
+    if (budget && r.budgetLevel !== budget) return false;
+    if (area && r.area !== area) return false;
+    if (search) {
+      const hay = (r.name + r.cuisine + r.description + r.specialties.join(' ')).toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  if (sort === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+  else if (sort === 'budget-low') filtered.sort((a,b) => {
+    const order = {'Budget':0,'Mid-range':1,'Premium':2};
+    return order[a.budgetLevel] - order[b.budgetLevel];
+  });
+  else if (sort === 'budget-high') filtered.sort((a,b) => {
+    const order = {'Budget':0,'Mid-range':1,'Premium':2};
+    return order[b.budgetLevel] - order[a.budgetLevel];
+  });
+  else if (sort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+  renderExplore(filtered);
+}
+
+// ─── MODAL ───
+function openModal(r) {
+  const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.address + ' Amritsar')}`;
+  const imgUrl = `https://images.unsplash.com/${r.photo}?auto=format&fit=crop&w=800&q=80`;
+  
+  document.getElementById('modal-img').innerHTML = `<img src="${imgUrl}" alt="${r.name}" onerror="this.parentElement.innerHTML='🍛'"/>`;
+  document.getElementById('modal-name').textContent = r.name;
+  document.getElementById('modal-desc').textContent = r.description;
+  document.getElementById('modal-cuisine').textContent = r.cuisine;
+  document.getElementById('modal-hours').textContent = r.hours;
+  document.getElementById('modal-cost').textContent = r.cost + ' for 2';
+  document.getElementById('modal-parking').textContent = r.parking === 'Yes' ? '✅ Available' : r.parking === 'No' ? '❌ No parking' : '🅿️ Street';
+  document.getElementById('modal-phone').textContent = r.phone === 'N/A' ? 'Not available' : r.phone;
+  document.getElementById('modal-area').textContent = r.area;
+
+  const vegClass = r.vegNV === 'Pure Veg' ? 'veg' : r.vegNV === 'Non-Veg' ? 'nonveg' : 'both';
+  document.getElementById('modal-pills').innerHTML = `
+    <span class="pill ${vegClass}">${r.vegNV}</span>
+    <span class="pill type">${r.type}</span>
+    <span class="pill budget">${r.budgetLevel}</span>
+    <span class="pill spice">${r.spiceLevel}</span>
+    ⭐ ${r.rating}
+  `;
+
+  document.getElementById('modal-specs').innerHTML = r.specialties.map(s => `<span class="spec-tag">${s}</span>`).join('');
+  document.getElementById('modal-maps-btn').href = mapsUrl;
+  const phone = r.phone !== 'N/A' ? r.phone : '';
+  document.getElementById('modal-call-btn').href = phone ? `tel:${phone}` : '#';
+  document.getElementById('modal-call-btn').textContent = phone ? '📞 Call' : '📞 No number';
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ─── PANEL SWITCH ───
+function switchPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.header-nav button').forEach((b,i) => b.classList.toggle('active', (name==='reco'&&i===0)||(name==='explore'&&i===1)));
+  if (name === 'explore' && !document.getElementById('explore-grid').children.length) {
+    renderExplore(RESTAURANTS);
+  }
+}
+
+function redoQuiz() {
+  prefs.vegPref = null; prefs.area = null; prefs.restType = null; prefs.cuisines = []; prefs.mealTime = null;
+  prefs.spice = 2; prefs.budget = 400;
+  document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.btn-next').forEach(b => { if (b.id) b.disabled = true; });
+  showScreen('quiz-screen');
+  goToQuestion(1);
+}
+
+// Keyboard close modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+// Init spice display
+updateSpice(2);
+</script>
+</body>
+</html>
